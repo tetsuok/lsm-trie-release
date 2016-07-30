@@ -1,0 +1,12 @@
+*.o
+src/bloom_test
+src/cm_util
+src/cmap_test
+src/generator_test
+src/io_util
+src/log
+src/mixed_test
+src/rwlock_test
+src/seqio_util
+src/staged_read
+src/table_test
