@@ -8,7 +8,7 @@ You need:
 
 To build:
 
-> $ make all
+> $ make
 
 # Run
 Get the help information to run the get/set tests:

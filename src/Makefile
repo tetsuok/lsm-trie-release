@@ -14,6 +14,9 @@ HEADERS = $(patsubst %, %.h, $(MODULES))
 
 TESTS = table_test bloom_test rwlock_test generator_test mixed_test cmap_test cm_util io_util staged_read seqio_util
 
+default: all:
+all: $(TESTS)
+
 table_test: table_test.c $(LIBOBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LDFLAGS)
 
@@ -47,8 +50,6 @@ seqio_util: seqio_util.c $(LIBOBJS)
 .PHONY: ess all util clean check
 ess: table_test mixed_test
 util: io_util cm_util seqio_util
-
-all: $(TESTS)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) -c $< -o $@
