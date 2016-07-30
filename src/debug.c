@@ -51,8 +51,7 @@ void debug_trace(void) {
 
     printf("Obtained %d stack frames.\n", size);
 
-    int i;
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
         printf("%d -> %s\n", i, strings[i]);
 
     free(strings);
