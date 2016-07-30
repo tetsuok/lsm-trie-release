@@ -37,23 +37,17 @@ void* huge_alloc(const uint64_t cap) {
         ((cap + MEMPOOL_UNIT - 1) / MEMPOOL_UNIT) * MEMPOOL_UNIT;
     if (hcap != cap)
         return NULL;
-    if (USING_MALLOC) {
+    if (USING_MALLOC)
         return aligned_alloc(MEMPOOL_UNIT, cap);
-    } else {
-        void* const m = mmap(NULL, cap, PROT_READ | PROT_WRITE,
-                             MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        if (m == MAP_FAILED) {
-            void* const m2 = mmap(NULL, cap, PROT_READ | PROT_WRITE,
-                                  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-            if (m2 == MAP_FAILED) {
-                return NULL;
-            } else {
-                return m2;
-            }
-        } else {
-            return m;
-        }
+
+    void* const m = mmap(NULL, cap, PROT_READ | PROT_WRITE,
+                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if (m == MAP_FAILED) {
+        void* const m2 = mmap(NULL, cap, PROT_READ | PROT_WRITE,
+                              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        return (m2 == MAP_FAILED) ? NULL : m2;
     }
+    return m;
 }
 
 void huge_free(void* const ptr, const uint64_t cap) {
