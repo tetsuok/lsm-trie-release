@@ -537,8 +537,7 @@ static void db_free(struct DB *const db) {
 }
 
 static uint64_t db_aquire_mtid(struct DB *const db) {
-    const uint64_t mtid = __sync_fetch_and_add(&(db->next_mtid), 1);
-    return mtid;
+    return __sync_fetch_and_add(&(db->next_mtid), 1);
 }
 
 static uint64_t db_cmap_safe_alloc(struct DB *const db,
