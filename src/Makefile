@@ -10,43 +10,41 @@ LIBRARY = -lcrypto -lrt -lm
 
 MODULES = table coding mempool debug bloom db rwlock stat conc cmap generator
 
-SOURCES = $(patsubst %, %.c, $(MODULES))
+LIBOBJS = $(patsubst %, %.o, $(MODULES))
 
 HEADERS = $(patsubst %, %.h, $(MODULES))
 
-DEPS = $(SOURCES) $(HEADERS)
-
 BINARYS = table_test bloom_test rwlock_test generator_test mixed_test cmap_test cm_util io_util staged_read seqio_util
 
-table_test: table_test.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+table_test: table_test.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-bloom_test: bloom_test.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+bloom_test: bloom_test.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-rwlock_test: rwlock_test.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+rwlock_test: rwlock_test.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-generator_test: generator_test.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+generator_test: generator_test.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-mixed_test: mixed_test.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+mixed_test: mixed_test.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-cmap_test: cmap_test.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+cmap_test: cmap_test.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-cm_util: cm_util.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+cm_util: cm_util.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-io_util: io_util.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+io_util: io_util.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-staged_read: staged_read.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+staged_read: staged_read.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
-seqio_util: seqio_util.c $(SOURCES)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+seqio_util: seqio_util.c $(LIBOBJS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LIBRARY)
 
 .PHONY : ess all util clean check
 ess : table_test mixed_test
@@ -54,8 +52,8 @@ util : io_util cm_util seqio_util
 
 all : $(BINARYS)
 
-% : %.c $(DEPS)
-	$(CC) $(CFLAGS) -o $@ $< $(SOURCES) $(LIBRARY)
+%.o: %.c
+	$(CC) -c $(CFLAGS) -c $< -o $@
 
 clean :
 	rm -rf $(BINARYS) *.o
