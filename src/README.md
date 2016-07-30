@@ -2,13 +2,14 @@
 
 You need:
 
-> clang or gcc (set it in Makefile).
-
-> openssl for SHA1 function.
+- C compiler (clang or gcc)
+- openssl for SHA1 function.
 
 To build:
 
 > $ make
+
+Optional: specify the compiler with `CC` flag (e.g., `CC=clang`)
 
 # Run
 Get the help information to run the get/set tests:
