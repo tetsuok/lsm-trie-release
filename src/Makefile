@@ -14,7 +14,7 @@ LIBOBJS = $(patsubst %, %.o, $(MODULES))
 
 HEADERS = $(patsubst %, %.h, $(MODULES))
 
-BINARYS = table_test bloom_test rwlock_test generator_test mixed_test cmap_test cm_util io_util staged_read seqio_util
+TESTS = table_test bloom_test rwlock_test generator_test mixed_test cmap_test cm_util io_util staged_read seqio_util
 
 table_test: table_test.c $(LIBOBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LDFLAGS)
@@ -50,13 +50,13 @@ seqio_util: seqio_util.c $(LIBOBJS)
 ess : table_test mixed_test
 util : io_util cm_util seqio_util
 
-all : $(BINARYS)
+all : $(TESTS)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) -c $< -o $@
 
 clean :
-	rm -rf $(BINARYS) *.o
+	rm -rf $(TESTS) *.o
 
 check :
 	cppcheck -I /usr/include -DDUMMY --enable=all .
