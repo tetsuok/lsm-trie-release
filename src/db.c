@@ -398,7 +398,7 @@ static struct VirtualContainer *recursive_parse(FILE *const in,
         fgets(buf, 28, in);
         assert(buf[0] == '>');
     }
-    if (load_bf == false) {  // no bf, load bc
+    if (!load_bf) {  // no bf, load bc
         assert(buf[1] == '!');
         // load bloomcontainer
         assert(buf[2] != '\0');
@@ -541,7 +541,7 @@ static uint64_t db_aquire_mtid(struct DB *const db) {
 
 static uint64_t db_cmap_safe_alloc(struct DB *const db,
                                    struct ContainerMap *const cm) {
-    while (db->closing == false) {
+    while (!db->closing) {
         const uint64_t off = containermap_alloc(cm);
         if (off < cm->total_cap) {
             return off;
@@ -564,7 +564,7 @@ static uint64_t db_table_dump(struct DB *const db, struct Table *const table,
 
     const bool rr = table_retain(table);
     // logging on failed retaining
-    if (rr == false) {
+    if (!rr) {
         // char buffer[4096];
         // table_analysis_verbose(table, buffer);
         db_log(db, "DUMP @%" PRIu64 " [%8" PRIx64 " FAILED!!]\n%s",
@@ -714,7 +714,7 @@ static void *thread_compaction_dump(void *const p) {
     comp->mts_new[i] = mt;
     stat_inc_n(&(comp->db->stat.nr_write[comp->sub_bit]), TABLE_MAX_BARRELS);
     assert(mt->bt == NULL);
-    if (comp->gen_bc == false) {
+    if (!comp->gen_bc) {
         mt->bt = comp->tables[i]->bt;
     }
     pthread_exit(NULL);
@@ -819,7 +819,7 @@ static void compaction_free_old(struct Compaction *const comp) {
             containermap_release(comp->db->cm_bc, comp->mbcs_old[i]->off_raw);
             bloomcontainer_free(comp->mbcs_old[i]);
         }
-        if (comp->gen_bc == false) {  // keep bloomtable
+        if (!comp->gen_bc) {  // keep bloomtable
             comp->tables[i]->bt = NULL;
         }
         table_free(comp->tables[i]);
@@ -924,7 +924,7 @@ static void *thread_meta_dumper(void *ptr) {
             db_dump_meta(db);
         }
         db->need_dump_meta = false;
-    } while (false == db->closing);
+    } while (!db->closing);
     pthread_exit(NULL);
 }
 
@@ -940,7 +940,7 @@ static void *thread_compaction(void *ptr) {
         assert(token < DB_COMPACTION_NR);
         // wait for work, using 'current'
         pthread_mutex_lock(&(db->mutex_current));
-        while ((db->closing == false) && (vc_count_feed(db->vcroot) == 0)) {
+        while ((!db->closing) && (vc_count_feed(db->vcroot) == 0)) {
             pthread_cond_broadcast(&(db->cond_root_producer));
             pthread_cond_wait(&(db->cond_root_consumer), &(db->mutex_current));
         }
@@ -974,8 +974,8 @@ static void *thread_active_dumper(void *ptr) {
             db->active_table[0] = NULL;
             break;
         }
-        while ((false == table_full(db->active_table[0])) &&
-               (false == db->closing)) {
+        while ((!table_full(db->active_table[0])) &&
+               (!db->closing)) {
             pthread_cond_wait(&(db->cond_active), &(db->mutex_active));
         }
         // shift active table
@@ -1133,7 +1133,7 @@ static bool db_insert_try(struct DB *const db, struct KeyValue *const kv) {
 
 bool db_insert(struct DB *const db, struct KeyValue *const kv) {
     stat_inc(&(db->stat.nr_set));
-    while (false == db_insert_try(db, kv)) {
+    while (!db_insert_try(db, kv)) {
         db_wait_active_table(db);
         stat_inc(&(db->stat.nr_set_retry));
     }
@@ -1188,16 +1188,16 @@ static bool db_touch_dir(const char *const root_dir,
 static struct DB *db_create(const char *const meta_dir,
                             struct ContainerMapConf *const cm_conf) {
     const double sec0 = debug_time_sec();
-    if (false == db_touch_dir(meta_dir, ""))
+    if (!db_touch_dir(meta_dir, ""))
         return NULL;
-    if (false == db_touch_dir(meta_dir, DB_META_BACKUP_DIR))
+    if (!db_touch_dir(meta_dir, DB_META_BACKUP_DIR))
         return NULL;
 
     // pre make 256 sub-dirs
     char sub_dir[16];
     for (uint64_t i = 0; i < 256; i++) {
         sprintf(sub_dir, "%02" PRIx64, i);
-        if (false == db_touch_dir(meta_dir, sub_dir))
+        if (!db_touch_dir(meta_dir, sub_dir))
             return NULL;
     }
 

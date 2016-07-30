@@ -654,7 +654,7 @@ static bool retaining_move_sorted(struct Barrel **const barrels) {
         struct Barrel *const bl = barrels[lid];
         const bool rm = retaining_move_barrels(br, bl);
 
-        if (rm == false)
+        if (!rm)
             return false;
         rid--;
         lid++;
@@ -749,7 +749,7 @@ bool table_retain(struct Table *const table) {
             break;  // done
         const bool rr = retaining_move_sorted(barrels);
         count++;
-        if (rr == false)
+        if (!rr)
             return false;
     }
     retaining_build_metaindex(table);
@@ -956,7 +956,7 @@ static bool raw_barrel_feed_to_tables(
     struct RawItem ri;
     uint8_t hash[HASHBYTES] __attribute__((aligned(8)));
     const bool r = rawitem_init(&ri, raw);
-    if (r == false)
+    if (!r)
         return false;
     do {
         SHA1(ri.pk, ri.klen, hash);
@@ -1046,7 +1046,7 @@ struct KeyValue *metatable_lookup(struct MetaTable *const mt,
     if (mt->bt) {
         const uint64_t hv = __hash_bf(hash);
         const bool exist = bloomtable_match(mt->bt, bid, hv);
-        if (exist == false) {
+        if (!exist) {
             if (mt->stat) {
                 __sync_add_and_fetch(&(mt->stat->nr_true_negative), 1);
             }

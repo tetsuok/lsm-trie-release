@@ -28,7 +28,7 @@ struct Magic {
 static void *th_reader_p(void *p) {
     struct Magic *m = (typeof(m))p;
     uint64_t rcount = 0;
-    while (m->gameover == false) {
+    while (!m->gameover) {
         pthread_rwlock_rdlock(&(m->rwlock_1));
         rcount++;
         pthread_rwlock_unlock(&(m->rwlock_1));
@@ -40,7 +40,7 @@ static void *th_reader_p(void *p) {
 static void *th_writer_p(void *p) {
     struct Magic *m = (typeof(m))p;
     uint64_t wcount = 0;
-    while (m->gameover == false) {
+    while (!m->gameover) {
         pthread_rwlock_wrlock(&(m->rwlock_1));
         wcount++;
         pthread_rwlock_unlock(&(m->rwlock_1));
@@ -52,7 +52,7 @@ static void *th_writer_p(void *p) {
 static void *th_reader(void *p) {
     struct Magic *m = (typeof(m))p;
     uint64_t rcount = 0;
-    while (m->gameover == false) {
+    while (!m->gameover) {
         const uint64_t t = rwlock_reader_lock(&(m->rwlock));
         rcount++;
         rwlock_reader_unlock(&(m->rwlock), t);
@@ -64,7 +64,7 @@ static void *th_reader(void *p) {
 static void *th_writer(void *p) {
     struct Magic *m = (typeof(m))p;
     uint64_t wcount = 0;
-    while (m->gameover == false) {
+    while (!m->gameover) {
         const uint64_t t = rwlock_writer_lock(&(m->rwlock));
         wcount++;
         rwlock_writer_unlock(&(m->rwlock), t);

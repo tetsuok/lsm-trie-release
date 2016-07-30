@@ -86,7 +86,7 @@ struct Mempool* mempool_new(const size_t cap) {
 
     p->pos = 0;
     const bool r = space_alloc_mmap(p, cap);
-    if (r == false) {
+    if (!r) {
         free(p);
         return NULL;
     }

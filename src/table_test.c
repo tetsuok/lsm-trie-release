@@ -45,7 +45,7 @@ static void table_test(const uint64_t max_value_size) {
         sprintf((char *)key, "%016" PRIx64, count);
         kv.vlen = gi->next(gi);
         const bool ri = table_insert_kv_safe(table, &kv);
-        if (ri == false) {
+        if (!ri) {
             break;
         }
         count++;

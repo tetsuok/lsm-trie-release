@@ -80,7 +80,7 @@ struct ContainerMap* containermap_create(const char* const raw_fn,
     if (raw_fd < 0)
         return NULL;
     const bool rp = containermap_probe(&cm0, raw_fd);
-    if (rp == false)
+    if (!rp)
         return NULL;
 
     const size_t nr_bytes = (cm0.nr_units + 7u) >> 3;

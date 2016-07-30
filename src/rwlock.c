@@ -45,7 +45,7 @@ uint64_t rwlock_reader_lock(struct RWLock *bo) {
     // find the room and line up
     struct ReaderLock *const rl = &(bo->rl[ticket & 1]);
     rl->nr_readers++;
-    while (rl->open == false) {  // wait for open
+    while (!rl->open) {  // wait for open
         pthread_cond_wait(&(rl->cond_reader), &(bo->mutex_any));
     }
     // do what you want
