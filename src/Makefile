@@ -1,5 +1,3 @@
-# Makefile
-
 CC = clang
 
 #CFLAGS = -Wall -Wextra -g -ggdb -O0 -pthread -std=gnu11
@@ -46,17 +44,17 @@ staged_read: staged_read.c $(LIBOBJS)
 seqio_util: seqio_util.c $(LIBOBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(LIBOBJS) $(LDFLAGS)
 
-.PHONY : ess all util clean check
-ess : table_test mixed_test
-util : io_util cm_util seqio_util
+.PHONY: ess all util clean check
+ess: table_test mixed_test
+util: io_util cm_util seqio_util
 
-all : $(TESTS)
+all: $(TESTS)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) -c $< -o $@
 
-clean :
+clean:
 	rm -rf $(TESTS) *.o
 
-check :
+check:
 	cppcheck -I /usr/include -DDUMMY --enable=all .
