@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
-#include <linux/fs.h>
 #include <openssl/sha.h>
 #include <pthread.h>
 #include <stdarg.h>
