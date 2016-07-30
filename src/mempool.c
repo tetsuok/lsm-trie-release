@@ -7,13 +7,13 @@
 #define _GNU_SOURCE
 #define _LARGEFILE64_SOURCE
 
+#include <assert.h>
+#include <inttypes.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <assert.h>
-#include <inttypes.h>
-#include <stdlib.h>
 
 #include "lsmtrie.h"
 
