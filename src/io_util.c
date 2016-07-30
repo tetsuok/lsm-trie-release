@@ -11,11 +11,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <linux/fs.h>
-#include <pthread.h>
 #include <signal.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -23,9 +19,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "debug.h"
-#include "generator.h"
-#include "stat.h"
+#include "lsmtrie.h"
 
 static volatile bool running = true;
 static uint32_t *latency = NULL;

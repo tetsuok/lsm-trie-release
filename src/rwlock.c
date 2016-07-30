@@ -9,11 +9,8 @@
 
 #include <assert.h>
 #include <inttypes.h>
-#include <pthread.h>
-#include <stdint.h>
-#include <stdio.h>
 
-#include "rwlock.h"
+#include "lsmtrie.h"
 
 void rwlock_show(struct RWLock *bo) {
     printf("****nxt %" PRIu64 " r %" PRIu64 " w %" PRIu64 " r0 %c %" PRIu64

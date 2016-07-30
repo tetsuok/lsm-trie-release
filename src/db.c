@@ -12,27 +12,15 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <openssl/sha.h>
-#include <pthread.h>
 #include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "cmap.h"
-#include "conc.h"
-#include "debug.h"
-#include "generator.h"
-#include "rwlock.h"
-#include "table.h"
-
-#include "db.h"
+#include "lsmtrie.h"
 
 #define DB_CONTAINER_NR ((20))
 struct Container {  // a container of tables
@@ -974,8 +962,7 @@ static void *thread_active_dumper(void *ptr) {
             db->active_table[0] = NULL;
             break;
         }
-        while ((!table_full(db->active_table[0])) &&
-               (!db->closing)) {
+        while ((!table_full(db->active_table[0])) && (!db->closing)) {
             pthread_cond_wait(&(db->cond_active), &(db->mutex_active));
         }
         // shift active table

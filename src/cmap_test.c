@@ -8,15 +8,11 @@
 #define _LARGEFILE64_SOURCE
 
 #include <assert.h>
-#include <pthread.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 #include <unistd.h>
 
-#include "cmap.h"
+#include "lsmtrie.h"
 
 static void cmap_test(void) {
     const char* const raw_fn = "/tmp/raw_test";

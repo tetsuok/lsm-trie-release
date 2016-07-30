@@ -12,25 +12,14 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <openssl/sha.h>
-#include <pthread.h>
 #include <signal.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "coding.h"
-#include "conc.h"
-#include "db.h"
-#include "debug.h"
-#include "generator.h"
-#include "stat.h"
-#include "table.h"
+#include "lsmtrie.h"
 
 // one for each thread
 struct DBParams {

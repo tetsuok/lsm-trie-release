@@ -8,10 +8,7 @@
 #define _LARGEFILE64_SOURCE
 
 #include <assert.h>
-#include <pthread.h>
-#include <stdint.h>
-
-#include "conc.h"
+#include "lsmtrie.h"
 
 void conc_set_affinity_n(const uint64_t cpu) {
     // bind to one cpu

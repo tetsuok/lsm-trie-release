@@ -12,23 +12,14 @@
 #include <inttypes.h>
 #include <malloc.h>
 #include <openssl/sha.h>
-#include <pthread.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "bloom.h"
-#include "coding.h"
-#include "debug.h"
-#include "mempool.h"
-#include "stat.h"
-
-#include "table.h"
+#include "lsmtrie.h"
 
 #define BARREL_CAP ((BARREL_ALIGN - sizeof(struct MetaIndex)))
 #define TABLE_VOLUME_PERCENT ((0.95))

@@ -8,14 +8,10 @@
 #define _LARGEFILE64_SOURCE
 #include <assert.h>
 #include <inttypes.h>
-#include <pthread.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "rwlock.h"
+#include "lsmtrie.h"
 
 struct Magic {
     struct RWLock rwlock;

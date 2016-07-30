@@ -8,14 +8,10 @@
 #define _LARGEFILE64_SOURCE
 
 #include <inttypes.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 
-#include "debug.h"
-#include "generator.h"
+#include "lsmtrie.h"
 
 static int uint64_compare(const void *p1, const void *p2) {
     const uint64_t v1 = *((uint64_t * const)p1);

@@ -8,11 +8,8 @@
 #define _LARGEFILE64_SOURCE
 
 #include <inttypes.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 
-#include "coding.h"
+#include "lsmtrie.h"
 
 uint8_t* encode_uint64(uint8_t* const dst, const uint64_t v) {
     static const uint64_t B = 0x80;

@@ -11,8 +11,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <linux/fs.h>
-#include <stdint.h>
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -20,9 +19,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "cmap.h"
-#include "generator.h"
-#include "table.h"
+#include "lsmtrie.h"
 
 #define CONTAINER_UNIT_SIZE ((TABLE_ALIGN))
 

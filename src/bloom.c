@@ -8,21 +8,12 @@
 #define _LARGEFILE64_SOURCE
 
 #include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#include "coding.h"
-#include "coding.h"
-#include "mempool.h"
-#include "stat.h"
-#include "table.h"
-
-#include "bloom.h"
+#include "lsmtrie.h"
 // 20-14
 // 18-12 * 2.5 ~ 5
 // 16-11 * x8 0.05%  x64 ~3%  x128 ~6%

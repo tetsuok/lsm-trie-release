@@ -7,11 +7,10 @@
 #define _GNU_SOURCE
 #define _LARGEFILE64_SOURCE
 #include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
+
 #include <stdlib.h>
 
-#include "cmap.h"
+#include "lsmtrie.h"
 
 int main(int argc, char **argv) {
     if (argc < 2) {

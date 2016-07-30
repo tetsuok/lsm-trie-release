@@ -9,12 +9,11 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdint.h>
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "generator.h"
+#include "lsmtrie.h"
 
 uint64_t random_uint64(void) {
     // 62 bit random value;

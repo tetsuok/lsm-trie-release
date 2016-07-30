@@ -9,12 +9,10 @@
 
 #include <assert.h>
 #include <inttypes.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "stat.h"
+#include "lsmtrie.h"
 
 void stat_inc(uint64_t *const p) {
     __sync_fetch_and_add(p, 1);

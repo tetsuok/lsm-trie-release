@@ -11,15 +11,11 @@
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include <assert.h>
 #include <inttypes.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 
-#include "mempool.h"
+#include "lsmtrie.h"
 
 #define MEMPOOL_UNIT (1024 * 1024 * 2)
 

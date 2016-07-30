@@ -9,10 +9,8 @@
 
 #include <execinfo.h>
 #include <inttypes.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include "lsmtrie.h"
 
 uint64_t debug_time_usec(void) {
     struct timeval tv;
