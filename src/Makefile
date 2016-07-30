@@ -1,4 +1,4 @@
-CC = clang
+CC = cc
 
 #CFLAGS = -Wall -Wextra -g -ggdb -O0 -pthread -std=gnu11
 CFLAGS = -Wall -Wextra -O3 -pthread -std=gnu11
