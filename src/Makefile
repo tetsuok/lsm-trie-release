@@ -14,7 +14,7 @@ HEADERS = $(patsubst %, %.h, $(MODULES))
 
 TESTS = table_test bloom_test rwlock_test generator_test mixed_test cmap_test cm_util io_util staged_read seqio_util
 
-default: all:
+default: all
 all: $(TESTS)
 
 table_test: table_test.c $(LIBOBJS)
