@@ -75,9 +75,7 @@ static void test_gen(struct GenInfo *gi, char *const tag,
     free(r);
 }
 
-int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
+int main() {
     struct GenInfo *gis[11];
     gis[0] = generator_new_constant(1984);
     gis[1] = generator_new_counter(1984);

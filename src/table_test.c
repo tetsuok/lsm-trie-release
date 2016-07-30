@@ -117,9 +117,7 @@ static void table_test(const uint64_t max_value_size) {
     metatable_free(mt);
 }
 
-int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
+int main() {
     table_test(200);
     table_test(300);
     table_test(400);

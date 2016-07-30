@@ -109,9 +109,7 @@ static void run_test(const char *const tag, const uint64_t nr_readers,
            tag, nr_writers, nr_readers, x.wcount, x.rcount);
 }
 
-int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
+int main() {
     for (uint64_t w = 0; w < 8; w++) {
         run_test("TICKET ", 0, w, th_reader, th_writer);
         for (uint64_t r = 4; r < 256; r <<= 2) {

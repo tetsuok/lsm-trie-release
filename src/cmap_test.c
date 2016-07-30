@@ -61,9 +61,7 @@ static void cmap_test(void) {
     containermap_destroy(cm1);
 }
 
-int main(int argc, char** argv) {
-    (void)argc;
-    (void)argv;
+int main() {
     cmap_test();
     return 0;
 }

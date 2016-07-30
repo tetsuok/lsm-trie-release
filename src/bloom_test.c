@@ -299,9 +299,7 @@ void containertest(void) {
     printf("containertest: passed\n");
 }
 
-int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
+int main() {
     uncached_probe_test();
     false_positive_test();
     multi_level_false_positive_test();
