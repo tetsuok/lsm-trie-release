@@ -16,8 +16,7 @@
 
 uint64_t random_uint64(void) {
     // 62 bit random value;
-    const uint64_t rand64 = (((uint64_t)random()) << 31) + ((uint64_t)random());
-    return rand64;
+    return (((uint64_t)random()) << 31) + ((uint64_t)random());
 }
 
 #define RAND64_MAX ((((uint64_t)RAND_MAX) << 31) + ((uint64_t)RAND_MAX))
@@ -25,9 +24,7 @@ uint64_t random_uint64(void) {
 
 static double random_double(void) {
     // random between 0.0 - 1.0
-    const double r = (double)random_uint64();
-    const double rd = r / RAND64_MAX_D;
-    return rd;
+    return (double)random_uint64() / RAND64_MAX_D;
 }
 
 static uint64_t gen_constant(struct GenInfo *const gi) {
@@ -58,8 +55,7 @@ struct GenInfo *generator_new_counter(const uint64_t start) {
 }
 
 static uint64_t gen_exponential(struct GenInfo *const gi) {
-    const double d = -log(random_double()) / gi->gen.exponential.gamma;
-    return (uint64_t)d;
+    return (uint64_t)(-log(random_double()) / gi->gen.exponential.gamma);
 }
 
 struct GenInfo *generator_new_exponential(const double percentile,
@@ -179,22 +175,18 @@ struct GenInfo *generator_new_zipfian(const uint64_t min, const uint64_t max) {
 
 static uint64_t gen_xzipfian(struct GenInfo *const gi) {
     const uint64_t z = gen_zipfian(gi);
-    const uint64_t xz =
-        gi->gen.zipfian.min + (FNV_hash64(z) % gi->gen.zipfian.nr_items);
-    return xz;
+    return gi->gen.zipfian.min + (FNV_hash64(z) % gi->gen.zipfian.nr_items);
 }
 
 struct GenInfo *generator_new_xzipfian(const uint64_t min, const uint64_t max) {
     struct GenInfo *gi = generator_new_zipfian(min, max);
-
     gi->type = GEN_XZIPFIAN;
     gi->next = gen_xzipfian;
     return gi;
 }
 
 static uint64_t gen_uniform(struct GenInfo *const gi) {
-    const uint64_t off = (uint64_t)(random_double() * gi->gen.uniform.interval);
-    return gi->gen.uniform.min + off;
+    return gi->gen.uniform.min + (uint64_t)(random_double() * gi->gen.uniform.interval);
 }
 
 struct GenInfo *generator_new_uniform(const uint64_t min, const uint64_t max) {
