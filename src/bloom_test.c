@@ -117,13 +117,14 @@ void false_positive_test(void) {
 }
 
 void multi_level_false_positive_test(void) {
+#define nr_keys 1024UL
+#define nr_levels 64UL
+
     struct timeval tv;
     gettimeofday(&tv, NULL);
     srandom(tv.tv_usec);
 
     struct Mempool *p = mempool_new(256 * 1024 * 1024);
-    const uint64_t nr_keys = 1024;
-    const uint64_t nr_levels = 64;
     const uint64_t nr_all_keys = nr_keys * nr_levels;
 
     uint64_t *const keys = (typeof(keys))malloc(sizeof(keys[0]) * nr_all_keys);
