@@ -1,10 +1,14 @@
 CC = cc
 
-#CFLAGS = -Wall -Wextra -g -ggdb -O0 -pthread -std=gnu11
-CFLAGS = -Wall -Wextra -O3 -pthread -std=gnu11
+#OPT = -g -ggdb -O0
+OPT = -O3
 
-LDFLAGS = -lcrypto -lrt -lm
-#LDFLAGS = -lcrypto -lrt -lm -ljemalloc
+CFLAGS = -Wall -Wextra $(OPT) -pthread -std=gnu11
+
+ENABLE_JEMALLOC =
+#ENABLE_JEMALLOC = -ljemalloc
+
+LDFLAGS = -lcrypto -lrt -lm $(ENABLE_JEMALLOC)
 
 MODULES = table coding mempool debug bloom db rwlock stat conc cmap generator
 
