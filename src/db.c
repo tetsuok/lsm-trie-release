@@ -105,7 +105,7 @@ struct DB {
     pthread_t t_compaction[DB_COMPACTION_NR];
     pthread_t t_active_dumper;
     pthread_t t_meta_dumper;
-    //
+
     bool closing;
     bool need_dump_meta;
     uint64_t next_mtid;
@@ -558,13 +558,11 @@ static uint64_t db_cmap_safe_alloc(struct DB *const db,
 static uint64_t db_table_dump(struct DB *const db, struct Table *const table,
                               const uint64_t start_bit) {
     const double sec0 = debug_time_sec();
-    // aquire a uniq mtid;
     const uint64_t mtid = db_aquire_mtid(db);
     // post process table
     // must has bloom-filter
     assert(table->bt);
 
-    // retaining
     const bool rr = table_retain(table);
     // logging on failed retaining
     if (rr == false) {
@@ -837,15 +835,10 @@ static void compaction_main(struct DB *const db,
     compaction_initial(&comp, db, vc, nr_feed);
     // feed (must sequential)
     compaction_feed_all(&comp);
-    // build bt
     compaction_build_bt_all(&comp);
-    // dump table and bc
     compaction_dump_and_bc_all(&comp);
-    // apply changes
     compaction_update_vc(&comp);
-    // free old
     compaction_free_old(&comp);
-    // log
     db_log_diff(db, sec0, "COMP @%" PRIu64 " %2" PRIu64, vc->start_bit / 3u,
                 nr_feed);
     stat_inc(&(db->stat.nr_compaction));
@@ -1008,10 +1001,9 @@ static void *thread_active_dumper(void *ptr) {
             db->active_table[1] = NULL;
             rwlock_writer_unlock(&(db->rwlock), ticket2);
         } else if (table1->volume > 0) {
-            // build bt
             const bool rbt = table_build_bloomtable(table1);
             assert(rbt);
-            // dump
+
             const uint64_t mtid = db_table_dump(db, table1, 0);
             struct MetaTable *const mt =
                 db_load_metatable(db, mtid, db->cms[0]->raw_fd, false);
@@ -1197,10 +1189,8 @@ static bool db_touch_dir(const char *const root_dir,
 static struct DB *db_create(const char *const meta_dir,
                             struct ContainerMapConf *const cm_conf) {
     const double sec0 = debug_time_sec();
-    // touch dir
     if (false == db_touch_dir(meta_dir, ""))
         return NULL;
-    // touch meta_backup dir
     if (false == db_touch_dir(meta_dir, DB_META_BACKUP_DIR))
         return NULL;
 
