@@ -12,7 +12,6 @@
 #include <inttypes.h>
 #include <malloc.h>
 #include <openssl/sha.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>

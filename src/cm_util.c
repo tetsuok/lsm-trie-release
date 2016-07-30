@@ -6,8 +6,8 @@
 
 #define _GNU_SOURCE
 #define _LARGEFILE64_SOURCE
-#include <assert.h>
 
+#include <assert.h>
 #include <stdlib.h>
 
 #include "lsmtrie.h"

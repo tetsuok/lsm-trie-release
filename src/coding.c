@@ -8,7 +8,6 @@
 #define _LARGEFILE64_SOURCE
 
 #include <inttypes.h>
-
 #include "lsmtrie.h"
 
 uint8_t* encode_uint64(uint8_t* const dst, const uint64_t v) {
