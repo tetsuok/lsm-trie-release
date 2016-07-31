@@ -843,11 +843,9 @@ static void recursive_compaction(struct DB *const db,
         recursive_compaction(db, vc1);
         for (;;) {
             struct VirtualContainer *const vcf = vc_pick_full(vc->sub_vc, 0, 1);
-            if (vcf) {
-                recursive_compaction(db, vcf);
-            } else {
+            if (!vcf)
                 break;
-            }
+            recursive_compaction(db, vcf);
         }
     }
 }
@@ -876,11 +874,9 @@ static void db_root_compaction(struct DB *const db, uint64_t token) {
         for (;;) {
             struct VirtualContainer *const vcf =
                 vc_pick_full(vc->sub_vc, token, DB_COMPACTION_NR);
-            if (vcf) {
-                recursive_compaction(db, vcf);
-            } else {
+            if (!vcf)
                 break;
-            }
+            recursive_compaction(db, vcf);
         }
     }
 
@@ -1125,13 +1121,9 @@ bool db_multi_insert(struct DB *const db, uint64_t nr_items,
         const uint64_t ticket = rwlock_writer_lock(&(db->rwlock));
         struct Table *at = db->active_table[0];
         while (i < nr_items) {
-            const struct KeyValue *const kv = &(kvs[i]);
-            const bool ri = table_insert_kv_safe(at, kv);
-            if (ri) {
-                i++;
-            } else {
+            if (!table_insert_kv_safe(at, &kvs[i]))
                 break;
-            }
+            i++;
         }
         rwlock_writer_unlock(&(db->rwlock), ticket);
 
