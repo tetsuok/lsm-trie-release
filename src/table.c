@@ -63,8 +63,7 @@ struct MetaIndex {
 
 static uint64_t __hash_bf(const uint8_t *const hash) {
     const uint64_t *const phv = (typeof(phv))(&(hash[12]));
-    const uint64_t hv = *phv;
-    return hv;
+    return *phv;
 }
 
 // for bloom-filter
@@ -77,8 +76,7 @@ static uint32_t __hash_order(const uint8_t *const hash, uint16_t bid) {
     const uint32_t *const phv = (typeof(phv))(&(hash[12]));
     const uint32_t hv = *phv;
     const uint16_t shift = bid % (sizeof(hv) * 8);  // % 32
-    const uint32_t hv1 = (hv << (shift)) | (hv >> (32 - shift));
-    return hv1;
+    return (hv << (shift)) | (hv >> (32 - shift));
 }
 
 // for select items on moving
@@ -89,8 +87,7 @@ static inline uint32_t item_hash_order(const struct Item *const item,
 
 static uint32_t __hash_ht(const uint8_t *const hash) {
     const uint32_t *const phv = (typeof(phv))(&(hash[16]));
-    const uint32_t hv = (*phv) % BARREL_NR_HT;
-    return hv;
+    return (*phv) % BARREL_NR_HT;
 }
 
 // for barrel->items[?]
@@ -475,8 +472,7 @@ struct Table *table_alloc_new(double cap_percent, double mempool_factor) {
     table->mempool = mempool_new(msize);
 
     const uint64_t cap_limit = (uint64_t)(cap_max * cap_percent);
-    const bool ri = table_initial(table, cap_limit);
-    assert(ri);
+    assert(table_initial(table, cap_limit));
     return table;
 }
 
@@ -972,8 +968,7 @@ static struct KeyValue *metatable_recursive_lookup(
         __find_metaindex(mt->mfh.nr_mi, mt->mis, bid);
     const bool fetch0 = (!mi0) || (hash32 >= mi0->min);
     if (fetch0) {
-        const bool rf = raw_barrel_fetch(mt, bid, buf);
-        assert(rf);
+        assert(raw_barrel_fetch(mt, bid, buf));
     }
     const struct MetaIndex *const mi = mi0 ? mi0 : raw_barrel_metaindex(buf);
     if (hash32 < mi->min) {  // mast be in another barrel
@@ -982,8 +977,7 @@ static struct KeyValue *metatable_recursive_lookup(
     }
 
     if (!fetch0) {
-        const bool rf = raw_barrel_fetch(mt, bid, buf);
-        assert(rf);
+        assert(raw_barrel_fetch(mt, bid, buf));
     }
     struct KeyValue *const kv = raw_barrel_lookup(klen, key, buf);
     if ((!kv) && (hash32 == mi->min) &&
@@ -1039,9 +1033,7 @@ bool metatable_feed_barrels_to_tables(
     raw_barrel_fetch_multiple(mt, start, nr, arena);
     for (uint64_t i = 0; i < nr; i++) {
         uint8_t *const raw = &(arena[i * BARREL_ALIGN]);
-        const bool rf =
-            raw_barrel_feed_to_tables(raw, tables, select_table, arg2);
-        assert(rf);
+        assert(raw_barrel_feed_to_tables(raw, tables, select_table, arg2));
     }
     return true;
 }
