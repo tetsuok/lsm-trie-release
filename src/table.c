@@ -576,13 +576,9 @@ struct KeyValue *table_lookup(struct Table *const table, const uint16_t klen,
 static inline int __compare_volume(const void *const p1, const void *const p2) {
     struct Barrel *const b1 = *((typeof(&b1))p1);
     struct Barrel *const b2 = *((typeof(&b2))p2);
-    if (b1->volume < b2->volume) {
-        return -1;
-    } else if (b1->volume > b2->volume) {
-        return 1;
-    } else {
-        return 0;
-    }
+    if (b1->volume == b2->volume)
+      return 0;
+    return b1->volume < b2->volume ? -1 : 1;
 }
 
 static void retaining_sort_barrels_by_volume(struct Table *const table,
@@ -600,13 +596,9 @@ static int __compare_hash_order(const void *const p1, const void *const p2,
     uint64_t *const pbid = (typeof(pbid))arg;
     const uint32_t h1 = item_hash_order(i1, *pbid);
     const uint32_t h2 = item_hash_order(i2, *pbid);
-    if (h1 < h2) {
-        return -1;
-    } else if (h1 > h2) {
-        return 1;
-    } else {
-        return 0;
-    }
+    if (h1 == h2)
+      return 0;
+    return h1 < h2 ? -1 : 1;
 }
 
 static bool retaining_move_barrels(struct Barrel *const br,
@@ -655,14 +647,10 @@ static bool retaining_move_sorted(struct Barrel **const barrels) {
 static int __compare_out(const void *const p1, const void *const p2) {
     struct Barrel *const b1 = *((typeof(&b1))p1);
     struct Barrel *const b2 = *((typeof(&b2))p2);
+    if (b1->nr_out == b2->nr_out)
+      return 0;
     // big -> small
-    if (b1->nr_out < b2->nr_out) {
-        return 1;
-    } else if (b1->nr_out > b2->nr_out) {
-        return -1;
-    } else {
-        return 0;
-    }
+    return b1->nr_out < b2->nr_out ? 1 : -1;
 }
 
 static uint64_t retaining_nr_todo(struct Table *const table) {
@@ -683,13 +671,9 @@ static uint64_t retaining_nr_todo(struct Table *const table) {
 static int __compare_id(const void *const p1, const void *const p2) {
     const struct MetaIndex *const m1 = (typeof(m1))p1;
     const struct MetaIndex *const m2 = (typeof(m2))p2;
-    if (m1->id < m2->id) {
-        return -1;
-    } else if (m1->id > m2->id) {
-        return 1;
-    } else {
-        return 0;
-    }
+    if (m1->id == m2->id)
+      return 0;
+    return m1->id < m2->id ? -1 : 1;
 }
 
 static void retaining_build_metaindex(struct Table *const table) {
