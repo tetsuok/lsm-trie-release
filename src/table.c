@@ -897,7 +897,7 @@ static struct KeyValue *raw_barrel_lookup(const uint64_t klen0,
                                           const uint8_t *const key0,
                                           const uint8_t *const raw) {
     struct RawItem ri;
-    if (rawitem_init(&ri, raw) == false) {
+    if (!rawitem_init(&ri, raw)) {
         return NULL;
     }
 
@@ -908,7 +908,7 @@ static struct KeyValue *raw_barrel_lookup(const uint64_t klen0,
                 return rawitem_to_keyvalue(&ri);
             }
         }
-    } while (true == rawitem_next(&ri));
+    } while (rawitem_next(&ri));
     return NULL;
 }
 
@@ -1016,7 +1016,7 @@ static struct KeyValue *metatable_recursive_lookup(
         return metatable_recursive_lookup(mt, mi->rid, buf, klen, key, hash);
     }
 
-    if (fetch0 == false) {
+    if (!fetch0) {
         const bool rf = raw_barrel_fetch(mt, bid, buf);
         assert(rf);
     }

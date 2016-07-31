@@ -111,7 +111,7 @@ struct ContainerMap* containermap_load(const char* const meta_fn,
         containermap_open_raw(raw_fn, nr_units * CONTAINER_UNIT_SIZE);
     assert(raw_fd >= 0);
     const bool rp = containermap_probe(&cm0, raw_fd);
-    assert(rp == true);
+    assert(rp);
     // check if cap fits
     assert(cm0.nr_units >= nr_units);
 
@@ -229,7 +229,7 @@ bool containermap_release(struct ContainerMap* const cm,
     assert(new_byte < byte);
     cm->bits[id >> 3] = new_byte;
     cm->nr_used--;
-    if ((cm->discard == true) && (cm->raw_fd >= 0)) {  // issue TRIM
+    if ((cm->discard) && (cm->raw_fd >= 0)) {  // issue TRIM
         const uint64_t range[2] = {offset, CONTAINER_UNIT_SIZE};
         ioctl(cm->raw_fd, BLKDISCARD, range);
     }

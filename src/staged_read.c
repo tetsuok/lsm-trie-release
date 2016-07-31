@@ -114,7 +114,7 @@ static void staged_worker(const struct DBParams *const ps) {
         kvs[i].vlen = ps->vlen;
         kvs[i].pv = __ts.buf;
     }
-    for (uint64_t x = 1; __ts.test_running == true; x++) {
+    for (uint64_t x = 1; __ts.test_running; x++) {
         // write
         for (uint64_t j = 0; j < ps->nr_cycle; j++) {
             // random keys

@@ -60,9 +60,9 @@ static void table_test(const uint64_t max_value_size) {
     const double t2 = debug_time_sec();
     {
         const bool rbt = table_build_bloomtable(table);
-        assert(rbt == true);
+        assert(rbt);
         const bool rre = table_retain(table);
-        assert(rre == true);
+        assert(rre);
     }
     // table_show(table, stdout);
     const double t3 = debug_time_sec();

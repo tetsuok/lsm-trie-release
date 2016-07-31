@@ -40,7 +40,7 @@ void uncached_probe_test(void) {
         const uint64_t r = random_uint64();
         const uint64_t k = random_uint64();
         const bool b = bloom_match(bfs[r % nr_units], k);
-        assert(b == true);
+        assert(b);
     }
     gettimeofday(&t1, NULL);
     free(bf0);

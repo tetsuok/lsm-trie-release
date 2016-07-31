@@ -101,7 +101,7 @@ static void mixed_worker(const struct DBParams *const ps) {
 
     // wait for instruction
     for (;;) {
-        if (__ts.test_running == true)
+        if (__ts.test_running)
             break;
         usleep(100);
     }
@@ -190,7 +190,7 @@ static uint64_t wait_for_deadline(const uint64_t sec) {
     __ts.usec_last = start;
 
     __ts.test_running = true;
-    while (__ts.test_running == true) {
+    while (__ts.test_running) {
         sleep(1);
         const uint64_t now = debug_time_usec();
         if (now - start > dur)

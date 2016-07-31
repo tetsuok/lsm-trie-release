@@ -755,13 +755,13 @@ static void compaction_dump_and_bc_all(struct Compaction *const comp) {
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
     for (uint64_t j = 0; j < 8; j++) {
         pthread_create(&(thd[j]), &attr, thread_compaction_dump, comp);
-        if (comp->gen_bc == true) {
+        if (comp->gen_bc) {
             pthread_create(&(thb[j]), &attr, thread_compaction_bc, comp);
         }
     }
     for (uint64_t j = 0; j < 8; j++) {
         pthread_join(thd[j], NULL);
-        if (comp->gen_bc == true) {
+        if (comp->gen_bc) {
             pthread_join(thb[j], NULL);
         }
     }
@@ -1136,7 +1136,7 @@ bool db_multi_insert(struct DB *const db, const uint64_t nr_items,
         while (i < nr_items) {
             const struct KeyValue *const kv = &(kvs[i]);
             const bool ri = table_insert_kv_safe(at, kv);
-            if (ri == true) {
+            if (ri) {
                 i++;
             } else {
                 break;
