@@ -58,8 +58,7 @@ static uint64_t gen_exponential(struct GenInfo *const gi) {
     return (uint64_t)(-log(random_double()) / gi->gen.exponential.gamma);
 }
 
-struct GenInfo *generator_new_exponential(double percentile,
-                                          double range) {
+struct GenInfo *generator_new_exponential(double percentile, double range) {
     struct GenInfo *const gi = (typeof(gi))malloc(sizeof(*gi));
     gi->gen.exponential.gamma = -log(1.0 - (percentile / 100.0)) / range;
 
@@ -99,8 +98,7 @@ static uint64_t FNV_hash64(uint64_t value) {
     return hashval;
 }
 
-static double zeta_range(uint64_t start, uint64_t count,
-                         double theta) {
+static double zeta_range(uint64_t start, uint64_t count, double theta) {
     double sum = 0.0;
     if (count > 0x10000000) {
         fprintf(stderr,
@@ -186,7 +184,8 @@ struct GenInfo *generator_new_xzipfian(uint64_t min, uint64_t max) {
 }
 
 static uint64_t gen_uniform(struct GenInfo *const gi) {
-    return gi->gen.uniform.min + (uint64_t)(random_double() * gi->gen.uniform.interval);
+    return gi->gen.uniform.min +
+           (uint64_t)(random_double() * gi->gen.uniform.interval);
 }
 
 struct GenInfo *generator_new_uniform(uint64_t min, uint64_t max) {

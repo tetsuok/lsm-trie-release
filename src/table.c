@@ -107,8 +107,7 @@ static inline bool item_identical(const struct Item *const a,
     return !memcmp(a->kv, b->kv, a->klen);
 }
 
-static inline int item_identical_key(uint16_t klen,
-                                     const uint8_t *const pk,
+static inline int item_identical_key(uint16_t klen, const uint8_t *const pk,
                                      const struct Item *const i) {
     if (klen != i->klen)
         return false;
@@ -346,8 +345,7 @@ static inline void barrel_insert(struct Barrel *const barrel,
 
 // keyhead: need kv (only need key), klen
 static inline struct Item *barrel_lookup(struct Barrel *const barrel,
-                                         uint16_t klen,
-                                         const uint8_t *const pk,
+                                         uint16_t klen, const uint8_t *const pk,
                                          const uint8_t *const hash) {
     const uint32_t hid = __hash_ht(hash);
     return item_lookup(barrel->items[hid], klen, pk);
@@ -392,8 +390,7 @@ static void barrel_show(struct Barrel *const barrel, FILE *const fo) {
 }
 
 static const struct MetaIndex *__find_metaindex(
-    uint64_t nr_mi, const struct MetaIndex *const mis,
-    uint16_t id) {
+    uint64_t nr_mi, const struct MetaIndex *const mis, uint16_t id) {
     uint64_t lid = 0;
     uint64_t rid = nr_mi;
     while ((rid - lid) > 4) {
@@ -470,8 +467,7 @@ static bool table_initial(struct Table *const table, uint64_t capacity) {
     return true;
 }
 
-struct Table *table_alloc_new(double cap_percent,
-                              double mempool_factor) {
+struct Table *table_alloc_new(double cap_percent, double mempool_factor) {
     struct Table *const table = (typeof(table))malloc(sizeof(*table));
     assert(table);
     bzero(table, sizeof(*table));
@@ -577,7 +573,7 @@ static inline int __compare_volume(const void *const p1, const void *const p2) {
     struct Barrel *const b1 = *((typeof(&b1))p1);
     struct Barrel *const b2 = *((typeof(&b2))p2);
     if (b1->volume == b2->volume)
-      return 0;
+        return 0;
     return b1->volume < b2->volume ? -1 : 1;
 }
 
@@ -597,7 +593,7 @@ static int __compare_hash_order(const void *const p1, const void *const p2,
     const uint32_t h1 = item_hash_order(i1, *pbid);
     const uint32_t h2 = item_hash_order(i2, *pbid);
     if (h1 == h2)
-      return 0;
+        return 0;
     return h1 < h2 ? -1 : 1;
 }
 
@@ -648,7 +644,7 @@ static int __compare_out(const void *const p1, const void *const p2) {
     struct Barrel *const b1 = *((typeof(&b1))p1);
     struct Barrel *const b2 = *((typeof(&b2))p2);
     if (b1->nr_out == b2->nr_out)
-      return 0;
+        return 0;
     // big -> small
     return b1->nr_out < b2->nr_out ? 1 : -1;
 }
@@ -672,7 +668,7 @@ static int __compare_id(const void *const p1, const void *const p2) {
     const struct MetaIndex *const m1 = (typeof(m1))p1;
     const struct MetaIndex *const m2 = (typeof(m2))p2;
     if (m1->id == m2->id)
-      return 0;
+        return 0;
     return m1->id < m2->id ? -1 : 1;
 }
 
@@ -727,8 +723,7 @@ bool table_retain(struct Table *const table) {
     return true;
 }
 
-uint64_t table_dump_barrels(struct Table *const table, int fd,
-                            uint64_t off) {
+uint64_t table_dump_barrels(struct Table *const table, int fd, uint64_t off) {
     uint64_t nr_all_items = 0;
     for (uint64_t j = 0; j < TABLE_NR_BARRELS; j += TABLE_NR_IO) {
         const uint64_t nr_dump = ((j + TABLE_NR_IO) > TABLE_NR_BARRELS)
@@ -893,8 +888,8 @@ static struct KeyValue *raw_barrel_lookup(uint64_t klen0,
     return NULL;
 }
 
-static bool raw_barrel_fetch(struct MetaTable *const mt,
-                             uint64_t barrel_id, uint8_t *const buf) {
+static bool raw_barrel_fetch(struct MetaTable *const mt, uint64_t barrel_id,
+                             uint8_t *const buf) {
     const uint64_t off_barrel = (barrel_id * BARREL_ALIGN) + mt->mfh.off;
     const ssize_t r = pread(mt->raw_fd, buf, BARREL_ALIGN, (off_t)off_barrel);
 
@@ -905,8 +900,7 @@ static bool raw_barrel_fetch(struct MetaTable *const mt,
 }
 
 static bool raw_barrel_fetch_multiple(struct MetaTable *const mt,
-                                      uint64_t start_id,
-                                      uint64_t nbarrels,
+                                      uint64_t start_id, uint64_t nbarrels,
                                       uint8_t *const buf) {
     const uint64_t off_barrel = (start_id * BARREL_ALIGN) + mt->mfh.off;
     const size_t bytes = BARREL_ALIGN * nbarrels;
@@ -922,8 +916,7 @@ static const struct MetaIndex *raw_barrel_metaindex(const uint8_t *const buf) {
 
 static bool raw_barrel_feed_to_tables(
     uint8_t *const raw, struct Table *const *const tables,
-    uint64_t (*select_table)(const uint8_t *const, uint64_t),
-    uint64_t arg2) {
+    uint64_t (*select_table)(const uint8_t *const, uint64_t), uint64_t arg2) {
     struct RawItem ri;
     uint8_t hash[HASHBYTES] __attribute__((aligned(8)));
     const bool r = rawitem_init(&ri, raw);
@@ -979,8 +972,8 @@ struct MetaTable *metatable_load(const char *const metafn, int raw_fd,
 }
 
 static struct KeyValue *metatable_recursive_lookup(
-    struct MetaTable *const mt, uint16_t bid, uint8_t *const buf,
-    uint16_t klen, const uint8_t *const key, const uint8_t *const hash) {
+    struct MetaTable *const mt, uint16_t bid, uint8_t *const buf, uint16_t klen,
+    const uint8_t *const key, const uint8_t *const hash) {
     assert(bid < TABLE_NR_BARRELS);
     const uint32_t hash32 = __hash_order(hash, bid);
 
@@ -1010,8 +1003,8 @@ static struct KeyValue *metatable_recursive_lookup(
     }
 }
 
-struct KeyValue *metatable_lookup(struct MetaTable *const mt,
-                                  uint16_t klen, const uint8_t *const key,
+struct KeyValue *metatable_lookup(struct MetaTable *const mt, uint16_t klen,
+                                  const uint8_t *const key,
                                   const uint8_t *const hash) {
     const uint16_t bid = table_select_barrel(hash);
     if (mt->bt) {
@@ -1051,8 +1044,7 @@ void metatable_free(struct MetaTable *const mt) {
 bool metatable_feed_barrels_to_tables(
     struct MetaTable *const mt, uint16_t start, uint16_t nr,
     uint8_t *const arena, struct Table *const *const tables,
-    uint64_t (*select_table)(const uint8_t *const, uint64_t),
-    uint64_t arg2) {
+    uint64_t (*select_table)(const uint8_t *const, uint64_t), uint64_t arg2) {
     assert((start + nr) <= TABLE_NR_BARRELS);
     raw_barrel_fetch_multiple(mt, start, nr, arena);
     for (uint64_t i = 0; i < nr; i++) {

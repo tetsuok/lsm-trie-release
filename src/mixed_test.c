@@ -158,8 +158,7 @@ static void *mixed_thread(void *p) {
     return NULL;
 }
 
-static struct GenInfo *gen_initial(const char *const name,
-                                   uint64_t range) {
+static struct GenInfo *gen_initial(const char *const name, uint64_t range) {
     // static const uint64_t range = UINT64_C(0x20000000000);
     if (!name) {
         return generator_new_uniform(0, range);

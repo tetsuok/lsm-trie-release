@@ -83,8 +83,7 @@ static void *read_th(void *const p) {
     pthread_exit(NULL);
 }
 
-static void do_read(const char *const tag, uint64_t nr_readers,
-                    uint64_t sec) {
+static void do_read(const char *const tag, uint64_t nr_readers, uint64_t sec) {
     sleep(2);
     // read
     db_stat_clean(__ts.db);

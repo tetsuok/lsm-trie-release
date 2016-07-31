@@ -22,8 +22,7 @@
 
 #define CONTAINER_UNIT_SIZE ((TABLE_ALIGN))
 
-static int containermap_open_raw(const char* raw_fn,
-                                 off_t cap_hint) {
+static int containermap_open_raw(const char* raw_fn, off_t cap_hint) {
     struct stat rawst;
     int raw_fd = -1;
     assert(raw_fn);
@@ -50,8 +49,7 @@ static int containermap_open_raw(const char* raw_fn,
 }
 
 // nr_units, total_cap, discard
-static bool containermap_probe(struct ContainerMap* cm,
-                               int raw_fd) {
+static bool containermap_probe(struct ContainerMap* cm, int raw_fd) {
     struct stat st;
     assert(raw_fd >= 0);
     const int r = fstat(raw_fd, &st);
@@ -134,8 +132,7 @@ struct ContainerMap* containermap_load(const char* meta_fn,
     return cm;
 }
 
-void containermap_dump(struct ContainerMap* cm,
-                       const char* meta_fn) {
+void containermap_dump(struct ContainerMap* cm, const char* meta_fn) {
     assert(meta_fn);
     FILE* const cmap_out = fopen(meta_fn, "wb");
     assert(cmap_out);
@@ -218,8 +215,7 @@ uint64_t containermap_alloc(struct ContainerMap* cm) {
     return (cm->nr_units + 100u) * CONTAINER_UNIT_SIZE;
 }
 
-bool containermap_release(struct ContainerMap* cm,
-                          uint64_t offset) {
+bool containermap_release(struct ContainerMap* cm, uint64_t offset) {
     pthread_mutex_lock(&(cm->mutex_cm));
     assert((offset & (CONTAINER_UNIT_SIZE - 1u)) == 0);
     const uint64_t id = offset / CONTAINER_UNIT_SIZE;

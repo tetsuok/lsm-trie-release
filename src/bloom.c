@@ -56,8 +56,8 @@ void bloom_update(struct BloomFilter *const bf, uint64_t hv) {
     bf->nr_keys++;
 }
 
-static inline bool bloom_match_raw(const uint8_t *const filter,
-                                   uint32_t bytes, uint64_t hv) {
+static inline bool bloom_match_raw(const uint8_t *const filter, uint32_t bytes,
+                                   uint64_t hv) {
     uint64_t h = hv;
     const uint64_t delta = (h >> HSHIFT0) | (h << HSHIFT1);
     const uint64_t bits = bloom_bytes_to_bits(bytes);
@@ -198,8 +198,7 @@ void bloomtable_free(struct BloomTable *const bt) {
 //         uint16_t uint16_t     encoded
 // format: <box-id> <len-of-box> <len-of-bf> <raw_bf> <len-of-bf> <raw_bf> ...
 struct BloomContainer *bloomcontainer_build(struct BloomTable *const bt,
-                                            int raw_fd,
-                                            uint64_t off_raw,
+                                            int raw_fd, uint64_t off_raw,
                                             struct Stat *const stat) {
     const uint64_t pages_cap = TABLE_ALIGN;
     uint8_t *const pages = huge_alloc(pages_cap);
@@ -435,8 +434,7 @@ bool bloomcontainer_dump_meta(struct BloomContainer *const bc, FILE *const fo) {
     return true;
 }
 
-struct BloomContainer *bloomcontainer_load_meta(FILE *const fi,
-                                                int raw_fd) {
+struct BloomContainer *bloomcontainer_load_meta(FILE *const fi, int raw_fd) {
     struct BloomContainer bc0;
     assert(fi);
     const size_t noff = fread(&(bc0.off_raw), sizeof(bc0.off_raw), 1, fi);
@@ -484,8 +482,8 @@ static uint64_t bloomcontainer_match_nr(struct BloomContainer *const bc,
 }
 
 // return bitmap. 0: no match
-uint64_t bloomcontainer_match(struct BloomContainer *const bc,
-                              uint32_t index, uint64_t hv) {
+uint64_t bloomcontainer_match(struct BloomContainer *const bc, uint32_t index,
+                              uint64_t hv) {
     uint8_t boxpage[BARREL_ALIGN] __attribute__((aligned(4096)));
     const bool rf = bloomcontainer_fetch_raw(bc, (uint64_t)index, boxpage);
     assert(rf);

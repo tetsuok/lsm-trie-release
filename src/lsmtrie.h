@@ -251,12 +251,10 @@ struct BloomTable *bloomtable_build(struct BloomFilter *const *const bfs,
                                     uint64_t nr_bf);
 bool bloomtable_dump(struct BloomTable *const bt, FILE *fo);
 struct BloomTable *bloomtable_load(FILE *const fi);
-bool bloomtable_match(struct BloomTable *const bt, uint32_t index,
-                      uint64_t hv);
+bool bloomtable_match(struct BloomTable *const bt, uint32_t index, uint64_t hv);
 void bloomtable_free(struct BloomTable *const bt);
 struct BloomContainer *bloomcontainer_build(struct BloomTable *const bt,
-                                            int raw_fd,
-                                            uint64_t off_raw,
+                                            int raw_fd, uint64_t off_raw,
                                             struct Stat *const stat);
 struct BloomContainer *bloomcontainer_update(struct BloomContainer *const bc,
                                              struct BloomTable *const bt,
@@ -264,10 +262,9 @@ struct BloomContainer *bloomcontainer_update(struct BloomContainer *const bc,
                                              uint64_t new_off_raw,
                                              struct Stat *const stat);
 bool bloomcontainer_dump_meta(struct BloomContainer *const bc, FILE *const fo);
-struct BloomContainer *bloomcontainer_load_meta(FILE *const fi,
-                                                int raw_fd);
-uint64_t bloomcontainer_match(struct BloomContainer *const bc,
-                              uint32_t index, uint64_t hv);
+struct BloomContainer *bloomcontainer_load_meta(FILE *const fi, int raw_fd);
+uint64_t bloomcontainer_match(struct BloomContainer *const bc, uint32_t index,
+                              uint64_t hv);
 void bloomcontainer_free(struct BloomContainer *const bc);
 
 // cmap.c
@@ -315,8 +312,7 @@ inline const uint8_t *decode_uint32(const uint8_t *const src,
 // conc.c
 void conc_set_affinity_0(void);
 void conc_set_affinity_n(uint64_t cpu);
-void conc_fork_reduce(uint64_t nr, void *(*func)(void *),
-                      void *const arg);
+void conc_fork_reduce(uint64_t nr, void *(*func)(void *), void *const arg);
 
 // db.c
 struct DB;
@@ -348,8 +344,7 @@ void debug_trace(void);
 uint64_t random_uint64(void);
 struct GenInfo *generator_new_constant(uint64_t constant);
 struct GenInfo *generator_new_counter(uint64_t start);
-struct GenInfo *generator_new_exponential(double percentile,
-                                          double range);
+struct GenInfo *generator_new_exponential(double percentile, double range);
 struct GenInfo *generator_new_zipfian(uint64_t min, uint64_t max);
 struct GenInfo *generator_new_xzipfian(uint64_t min, uint64_t max);
 struct GenInfo *generator_new_uniform(uint64_t min, uint64_t max);
@@ -385,8 +380,7 @@ void latency_95_99_999(uint32_t *const counters, FILE *const out);
 // table.c
 uint16_t table_select_barrel(const uint8_t *const hash);
 bool table_retain(struct Table *const table);
-struct Table *table_alloc_new(double cap_percent,
-                              double mempool_factor);
+struct Table *table_alloc_new(double cap_percent, double mempool_factor);
 struct Table *table_alloc_default(double mempool_factor);
 bool table_insert_kv_safe(struct Table *const table,
                           const struct KeyValue *const kv);
@@ -397,20 +391,18 @@ struct KeyValue *table_lookup(struct Table *const table, uint16_t klen,
 bool table_build_bloomtable(struct Table *const table);
 bool table_dump_meta(struct Table *const table, const char *const metafn,
                      uint64_t off);
-uint64_t table_dump_barrels(struct Table *const table, int fd,
-                            uint64_t off);
+uint64_t table_dump_barrels(struct Table *const table, int fd, uint64_t off);
 void table_free(struct Table *const table);
 void table_analysis_verbose(struct Table *const table, FILE *const out);
 void table_analysis_short(struct Table *const table, char *const buffer);
 void table_show(struct Table *const table, FILE *const fo);
 struct MetaTable *metatable_load(const char *const metafn, int raw_fd,
                                  bool load_bf, struct Stat *const stat);
-struct KeyValue *metatable_lookup(struct MetaTable *const mt,
-                                  uint16_t klen, const uint8_t *const key,
+struct KeyValue *metatable_lookup(struct MetaTable *const mt, uint16_t klen,
+                                  const uint8_t *const key,
                                   const uint8_t *const hash);
 void metatable_free(struct MetaTable *const mt);
 bool metatable_feed_barrels_to_tables(
     struct MetaTable *const mt, uint16_t start, uint16_t nr,
     uint8_t *const arena, struct Table *const *const tables,
-    uint64_t (*select_table)(const uint8_t *const, uint64_t),
-    uint64_t arg2);
+    uint64_t (*select_table)(const uint8_t *const, uint64_t), uint64_t arg2);

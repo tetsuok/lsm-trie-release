@@ -20,8 +20,7 @@ void conc_set_affinity_n(uint64_t cpu) {
     pthread_setaffinity_np(thread, sizeof(cpuset), &cpuset);
 }
 
-void conc_fork_reduce(uint64_t nr, void *(*func)(void *),
-                      void *const arg) {
+void conc_fork_reduce(uint64_t nr, void *(*func)(void *), void *const arg) {
     assert((nr > UINT64_C(0)) && (nr < UINT64_C(1024)));
     pthread_t ths[nr];
     pthread_attr_t attr;

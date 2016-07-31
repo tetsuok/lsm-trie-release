@@ -146,10 +146,8 @@ static void db_generate_meta_fn(struct DB *const db, uint64_t mtid,
             mtid);
 }
 
-static struct MetaTable *db_load_metatable(struct DB *const db,
-                                           uint64_t mtid,
-                                           int raw_fd,
-                                           bool load_bf) {
+static struct MetaTable *db_load_metatable(struct DB *const db, uint64_t mtid,
+                                           int raw_fd, bool load_bf) {
     char metafn[2048];
     db_generate_meta_fn(db, mtid, metafn);
     struct MetaTable *const mt =
@@ -178,8 +176,7 @@ static struct BloomContainer *db_load_bloomcontainer_meta(struct DB *const db,
     return bc;
 }
 
-static bool db_dump_bloomcontainer_meta(struct DB *const db,
-                                        uint64_t mtid,
+static bool db_dump_bloomcontainer_meta(struct DB *const db, uint64_t mtid,
                                         struct BloomContainer *const bc) {
     char bcmeta_fn[2048];
     db_generate_meta_fn(db, mtid, bcmeta_fn);
@@ -208,8 +205,8 @@ static void db_log(struct DB *const db, const char *const msg, ...) {
     fprintf(db->log, "%s%s\n", head, tail);
 }
 
-static void db_log_diff(struct DB *const db, double sec0,
-                        const char *const msg, ...) {
+static void db_log_diff(struct DB *const db, double sec0, const char *const msg,
+                        ...) {
     if (!db->log)
         return;
     const double sec1 = debug_time_sec();
@@ -288,8 +285,7 @@ static uint64_t vc_count_feed(struct VirtualContainer *const vc) {
 
 // pick from 8 vcs; return NULL for no compaction
 static struct VirtualContainer *vc_pick_compaction(
-    struct VirtualContainer *const *const vcs, uint64_t start,
-    uint64_t inc) {
+    struct VirtualContainer *const *const vcs, uint64_t start, uint64_t inc) {
     uint64_t max_id = 8;
     uint64_t max_height = 0;
     for (uint64_t i = start; i < 8; i += inc) {
@@ -310,8 +306,7 @@ static struct VirtualContainer *vc_pick_compaction(
 
 // pick one who is full
 static struct VirtualContainer *vc_pick_full(
-    struct VirtualContainer *const *const vcs, uint64_t start,
-    uint64_t inc) {
+    struct VirtualContainer *const *const vcs, uint64_t start, uint64_t inc) {
     for (uint64_t i = start; i < 8; i += inc) {
         if (!vcs[i])
             continue;

@@ -48,9 +48,8 @@ static int opendev(char *path) {
 
 static uint64_t __offset = 0;
 
-static inline ssize_t do_random_rw(int fd, size_t mask,
-                                   uint8_t *const buf, bool is_write,
-                                   uint64_t cap) {
+static inline ssize_t do_random_rw(int fd, size_t mask, uint8_t *const buf,
+                                   bool is_write, uint64_t cap) {
     const size_t size = (mask + 1u);
     const uint64_t offset = __sync_fetch_and_add(&(__offset), size);
     const off_t off = (offset % (cap - size)) & (~mask);
@@ -113,9 +112,8 @@ void *rw4k_thread(void *p) {
     pthread_exit(NULL);
 }
 
-static void show_io(const char *const tag, uint64_t io,
-                    uint64_t dur, size_t mask,
-                    uint64_t nr_th) {
+static void show_io(const char *const tag, uint64_t io, uint64_t dur,
+                    size_t mask, uint64_t nr_th) {
     const double dio = (double)io;
     const double ddur = (double)dur;
     const double unit_size = (double)(mask + 1u);
@@ -127,8 +125,8 @@ static void show_io(const char *const tag, uint64_t io,
            tag, nr_th, io, unit_size, dio / ddur, mb, th);
 }
 
-void threaded_rw(int fd, size_t mask, int dur, int nr_r,
-                 int nr_w, double perc) {
+void threaded_rw(int fd, size_t mask, int dur, int nr_r, int nr_w,
+                 double perc) {
     struct timeval t0;
     gettimeofday(&t0, NULL);
     latency = latency_initial();
