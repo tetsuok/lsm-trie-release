@@ -145,8 +145,7 @@ static struct Item *item_lookup(struct Item *const items, uint16_t klen,
                                 const uint8_t *const pk) {
     struct Item *iter = items;
     while (iter) {
-        const bool identical = item_identical_key(klen, pk, iter);
-        if (identical) {
+        if (item_identical_key(klen, pk, iter)) {
             return iter;
         }
         iter = iter->next;
@@ -435,8 +434,7 @@ uint16_t table_select_barrel(const uint8_t *const hash) {
     // using the 4~7 bits of the hash value
     const uint8_t *const start_byte = &(hash[4]);
     const uint64_t hv = *((uint64_t *)start_byte);
-    const uint16_t bid = (typeof(bid))(hv % TABLE_NR_BARRELS);
-    return bid;
+    return (uint16_t)(hv % TABLE_NR_BARRELS);
 }
 
 static bool table_initial(struct Table *const table, uint64_t capacity) {
@@ -659,9 +657,7 @@ static uint64_t retaining_nr_todo(struct Table *const table) {
     const uint64_t nr_covered = nr_all - nr_out;
     const uint64_t nr_cover =
         (typeof(nr_cover))(((double)nr_all) * METAINDEX_PERCENT);
-    const uint64_t nr_remains =
-        (nr_cover > nr_covered) ? (nr_cover - nr_covered) : 0;
-    return nr_remains;
+    return (nr_cover > nr_covered) ? (nr_cover - nr_covered) : 0;
 }
 
 static int __compare_id(const void *const p1, const void *const p2) {
@@ -879,10 +875,8 @@ static struct KeyValue *raw_barrel_lookup(uint64_t klen0,
 
     do {
         if (ri.klen == klen0) {
-            const int cmp = memcmp(key0, ri.pk, klen0);
-            if (cmp == 0) {  // match
+            if (!memcmp(key0, ri.pk, klen0))
                 return rawitem_to_keyvalue(&ri);
-            }
         }
     } while (rawitem_next(&ri));
     return NULL;
@@ -904,14 +898,12 @@ static bool raw_barrel_fetch_multiple(struct MetaTable *const mt,
                                       uint8_t *const buf) {
     const uint64_t off_barrel = (start_id * BARREL_ALIGN) + mt->mfh.off;
     const size_t bytes = BARREL_ALIGN * nbarrels;
-    const ssize_t r = pread(mt->raw_fd, buf, bytes, (off_t)off_barrel);
-    return r == BARREL_ALIGN;
+    return pread(mt->raw_fd, buf, bytes, (off_t)off_barrel) == BARREL_ALIGN;
 }
 
 static const struct MetaIndex *raw_barrel_metaindex(const uint8_t *const buf) {
     const uint8_t *const pmi = (typeof(pmi))(buf + BARREL_CAP);
-    const struct MetaIndex *const mi = (typeof(mi))pmi;
-    return mi;
+    return (const struct MetaIndex*)pmi;
 }
 
 static bool raw_barrel_feed_to_tables(
@@ -919,8 +911,7 @@ static bool raw_barrel_feed_to_tables(
     uint64_t (*select_table)(const uint8_t *const, uint64_t), uint64_t arg2) {
     struct RawItem ri;
     uint8_t hash[HASHBYTES] __attribute__((aligned(8)));
-    const bool r = rawitem_init(&ri, raw);
-    if (!r)
+    if (!rawitem_init(&ri, raw))
         return false;
     do {
         SHA1(ri.pk, ri.klen, hash);
@@ -1009,8 +1000,7 @@ struct KeyValue *metatable_lookup(struct MetaTable *const mt, uint16_t klen,
     const uint16_t bid = table_select_barrel(hash);
     if (mt->bt) {
         const uint64_t hv = __hash_bf(hash);
-        const bool exist = bloomtable_match(mt->bt, bid, hv);
-        if (!exist) {
+        if (!bloomtable_match(mt->bt, bid, hv)) {
             if (mt->stat) {
                 __sync_add_and_fetch(&(mt->stat->nr_true_negative), 1);
             }
