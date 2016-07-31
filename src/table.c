@@ -141,11 +141,10 @@ static inline uint16_t item_insert(struct Item **const items,
 static struct Item *item_lookup(struct Item *const items, uint16_t klen,
                                 const uint8_t *const pk) {
     struct Item *iter = items;
-    while (iter) {
+    for (; iter; iter = iter->next) {
         if (item_identical_key(klen, pk, iter)) {
             return iter;
         }
-        iter = iter->next;
     }
     return NULL;
 }
@@ -291,10 +290,8 @@ static uint16_t barrel_count(struct Barrel *const barrel) {
     uint16_t count = 0;
     for (uint64_t i = 0; i < BARREL_NR_HT; i++) {
         struct Item *iter = barrel->items[i];
-        while (iter) {
+        for (; iter; iter = iter->next)
             count++;
-            iter = iter->next;
-        }
     }
     return count;
 }
@@ -303,10 +300,8 @@ static uint16_t barrel_count_lookup(struct Barrel *const barrel) {
     uint16_t count = 0;
     for (uint64_t i = 0; i < BARREL_NR_HT; i++) {
         struct Item *iter = barrel->items[i];
-        while (iter) {
+        for (; iter; iter = iter->next)
             count += (1 + iter->nr_moved);
-            iter = iter->next;
-        }
     }
     return count;
 }
@@ -316,10 +311,8 @@ static uint16_t barrel_to_array(struct Barrel *const barrel,
     uint16_t item_count = 0;
     for (uint64_t i = 0; i < BARREL_NR_HT; i++) {
         struct Item *iter = barrel->items[i];
-        while (iter) {
+        for (; iter; iter = iter->next)
             items[item_count++] = iter;
-            iter = iter->next;
-        }
     }
     return item_count;
 }
@@ -354,11 +347,10 @@ static uint16_t barrel_dump_buffer(struct Barrel *const barrel,
     uint16_t nr_items = 0;
     for (uint64_t i = 0; i < BARREL_NR_HT; i++) {
         struct Item *iter = barrel->items[i];
-        while (iter) {
+        for (; iter; iter = iter->next) {
             uint8_t *const pnext = item_encode(iter, ptr);
             assert(pnext <= (buffer + (long)BARREL_CAP));
             ptr = pnext;
-            iter = iter->next;
             nr_items++;
         }
     }
@@ -784,13 +776,12 @@ void table_analysis_verbose(struct Table *const table, FILE *const out) {
         uint16_t volume = 0;
         for (uint64_t hid = 0; hid < BARREL_NR_HT; hid++) {
             struct Item *iter = barrel->items[hid];
-            while (iter) {
+            for (; iter; iter = iter->next) {
                 x_moved[iter->nr_moved]++;
                 x_moved_all += iter->nr_moved;
                 if (iter->nr_moved > x_moved_max)
                     x_moved_max = iter->nr_moved;
                 volume += iter->volume;
-                iter = iter->next;
             }
         }
         if (barrel->nr_out) {
