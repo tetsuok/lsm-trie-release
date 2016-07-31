@@ -293,7 +293,7 @@ static struct VirtualContainer *vc_pick_compaction(
     uint64_t max_id = 8;
     uint64_t max_height = 0;
     for (uint64_t i = start; i < 8; i += inc) {
-        if (vcs[i] == NULL)
+        if (!vcs[i])
             continue;
         const uint64_t height = vc_count_feed(vcs[i]);
         if (height > max_height) {
@@ -313,7 +313,7 @@ static struct VirtualContainer *vc_pick_full(
     struct VirtualContainer *const *const vcs, const uint64_t start,
     const uint64_t inc) {
     for (uint64_t i = start; i < 8; i += inc) {
-        if (vcs[i] == NULL)
+        if (!vcs[i])
             continue;
         if (vcs[i]->cc.count == DB_CONTAINER_NR) {
             return vcs[i];
@@ -630,7 +630,7 @@ static void compaction_initial(struct Compaction *const comp,
 
     // mbcs_old (if exists else NULL)
     for (uint64_t i = 0; i < 8u; i++) {
-        if (vc->sub_vc[i] == NULL) {
+        if (!vc->sub_vc[i]) {
             vc->sub_vc[i] = vc_create(comp->sub_bit);
         }
         comp->mbcs_old[i] = vc->sub_vc[i]->cc.bc;
@@ -1104,7 +1104,7 @@ struct KeyValue *db_lookup(struct DB *const db, const uint16_t klen,
     struct KeyValue *const kv2 =
         recursive_lookup(&(db->stat), db->vcroot, klen, key, hash);
     rwlock_reader_unlock(&(db->rwlock), ticket);
-    if (kv2 == NULL) {
+    if (!kv2) {
         stat_inc(&(db->stat.nr_get_miss));
     }
     return kv2;

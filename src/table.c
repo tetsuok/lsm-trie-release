@@ -1005,7 +1005,7 @@ static struct KeyValue *metatable_recursive_lookup(
 
     const struct MetaIndex *const mi0 =
         __find_metaindex(mt->mfh.nr_mi, mt->mis, bid);
-    const bool fetch0 = (mi0 == NULL) || (hash32 >= mi0->min);
+    const bool fetch0 = (!mi0) || (hash32 >= mi0->min);
     if (fetch0) {
         const bool rf = raw_barrel_fetch(mt, bid, buf);
         assert(rf);
