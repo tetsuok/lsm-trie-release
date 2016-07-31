@@ -246,7 +246,7 @@ static struct Item *rawitem_to_item(const struct RawItem *const ri,
     assert(mempool);
     const size_t msize = sizeof(struct Item) + ri->klen + ri->vlen;
     struct Item *const item = (typeof(item))mempool_alloc(mempool, msize);
-    if (item == NULL)
+    if (!item)
         return NULL;
     bzero(item, msize);
     // rb leave empty
@@ -274,7 +274,7 @@ static struct Item *keyvalue_to_item(const struct KeyValue *const kv,
     assert(mempool);
     const size_t msize = sizeof(struct Item) + kv->klen + kv->vlen;
     struct Item *const item = (typeof(item))mempool_alloc(mempool, msize);
-    if (item == NULL)
+    if (!item)
         return NULL;
     bzero(item, msize);
     // rb leave empty
@@ -447,7 +447,7 @@ static bool table_initial(struct Table *const table, const uint64_t capacity) {
     assert(table->mempool);
     table->barrels =
         (typeof(table->barrels))mempool_alloc(table->mempool, main_space);
-    if (table->barrels == NULL) {
+    if (!table->barrels) {
         return false;
     }
     bzero(table->barrels, main_space);
@@ -459,7 +459,7 @@ static bool table_initial(struct Table *const table, const uint64_t capacity) {
     table->volume = 0;
     table->capacity = capacity;
     table->bt = NULL;
-    if (table->io_buffer == NULL) {
+    if (!table->io_buffer) {
         table->io_buffer = huge_alloc(BARREL_ALIGN * TABLE_NR_IO);
         assert(table->io_buffer);
     }
@@ -545,7 +545,7 @@ bool table_insert_kv_safe(struct Table *const table,
     if (table_full(table))
         return false;
     struct Item *const item = keyvalue_to_item(kv, table->mempool);
-    if (item == NULL)
+    if (!item)
         return false;
     table_insert_item(table, item);
     return true;
@@ -553,7 +553,7 @@ bool table_insert_kv_safe(struct Table *const table,
 
 // build a BloomTable for itself
 bool table_build_bloomtable(struct Table *const table) {
-    assert(table->bt == NULL);
+    assert(!table->bt);
     struct BloomFilter *bfs[TABLE_NR_BARRELS];
     for (uint64_t i = 0; i < TABLE_NR_BARRELS; i++) {
         bfs[i] = barrel_create_bf(&(table->barrels[i]), table->mempool);
@@ -775,7 +775,7 @@ uint64_t table_dump_barrels(struct Table *const table, const int fd,
 bool table_dump_meta(struct Table *const table, const char *const metafn,
                      const uint64_t off) {
     FILE *const fo = fopen(metafn, "wb");
-    if (fo == NULL) {
+    if (!fo) {
         return false;
     }
 
@@ -960,7 +960,7 @@ static bool raw_barrel_feed_to_tables(
 struct MetaTable *metatable_load(const char *const metafn, const int raw_fd,
                                  const bool load_bf, struct Stat *const stat) {
     FILE *fi = fopen(metafn, "rb");
-    if (fi == NULL) {
+    if (!fi) {
         return NULL;
     }
 
@@ -1021,7 +1021,7 @@ static struct KeyValue *metatable_recursive_lookup(
         assert(rf);
     }
     struct KeyValue *const kv = raw_barrel_lookup(klen, key, buf);
-    if ((kv == NULL) && (hash32 == mi->min) &&
+    if ((!kv) && (hash32 == mi->min) &&
         (mi->id != mi->rid)) {  // maybe in another barrel
         return metatable_recursive_lookup(mt, mi->rid, buf, klen, key, hash);
     } else {  // must in current barrel

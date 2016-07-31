@@ -76,7 +76,7 @@ static bool space_alloc_mmap(struct Mempool* const mempool, const size_t cap) {
 
 struct Mempool* mempool_new(const size_t cap) {
     struct Mempool* const p = (typeof(p))malloc(sizeof(*p));
-    if (p == NULL) {
+    if (!p) {
         return NULL;
     }
 
@@ -91,7 +91,7 @@ struct Mempool* mempool_new(const size_t cap) {
 
 uint8_t* mempool_alloc(struct Mempool* const p, const size_t cap) {
     const size_t hcap = ((cap + 8u) & (~7u));
-    if ((p == NULL) || ((p->pos + hcap) > p->max)) {
+    if ((!p) || ((p->pos + hcap) > p->max)) {
         fprintf(stderr, "mempool_alloc() failed(1): pos: %" PRIu64
                         ", cap: %zu, max: %" PRIu64 "\n",
                 p ? p->pos : ~0, cap, p ? p->max : ~0);

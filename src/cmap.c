@@ -95,7 +95,7 @@ struct ContainerMap* containermap_load(const char* const meta_fn,
                                        const char* const raw_fn) {
     assert(meta_fn);
     FILE* const cmap_in = fopen(meta_fn, "rb");
-    if (cmap_in == NULL)
+    if (!cmap_in)
         return NULL;
     // 1: nr_units
     uint64_t nr_units = 0;

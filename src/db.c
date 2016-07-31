@@ -191,7 +191,7 @@ static bool db_dump_bloomcontainer_meta(struct DB *const db,
 }
 
 static void db_log(struct DB *const db, const char *const msg, ...) {
-    if (db->log == NULL)
+    if (!db->log)
         return;
     const double sec = debug_time_sec();
     char th_name[16] = {0};
@@ -210,7 +210,7 @@ static void db_log(struct DB *const db, const char *const msg, ...) {
 
 static void db_log_diff(struct DB *const db, const double sec0,
                         const char *const msg, ...) {
-    if (db->log == NULL)
+    if (!db->log)
         return;
     const double sec1 = debug_time_sec();
     char th_name[16] = {0};
@@ -273,7 +273,7 @@ static void vc_recursive_free(struct VirtualContainer *const vc) {
 
 // return 8 ... (DB_CONTAINER_NR) for compaction, 0 for NO compaction
 static uint64_t vc_count_feed(struct VirtualContainer *const vc) {
-    if (vc == NULL)
+    if (!vc)
         return 0;
     uint64_t vc_cap = 0;
     for (uint64_t j = 0; j < vc->cc.count; j++) {
@@ -701,7 +701,7 @@ static void *thread_compaction_dump(void *const p) {
     assert(mt);
     comp->mts_new[i] = mt;
     stat_inc_n(&(comp->db->stat.nr_write[comp->sub_bit]), TABLE_MAX_BARRELS);
-    assert(mt->bt == NULL);
+    assert(!mt->bt);
     if (!comp->gen_bc) {
         mt->bt = comp->tables[i]->bt;
     }
@@ -718,7 +718,7 @@ static struct BloomContainer *compaction_update_bc(
     const int raw_fd = db->cm_bc->raw_fd;
 
     struct BloomContainer *const new_bc =
-        (old_bc == NULL)
+        (!old_bc)
             ? bloomcontainer_build(bloomtable, raw_fd, off_bc, &(db->stat))
             : bloomcontainer_update(old_bc, bloomtable, raw_fd, off_bc,
                                     &(db->stat));
@@ -996,7 +996,7 @@ static void *thread_active_dumper(void *ptr) {
             assert(mt);
             stat_inc_n(&(db->stat.nr_write[0]), TABLE_NR_BARRELS);
             mt->bt = table1->bt;
-            // mark active_table[1]->bt == NULL before free it
+            // mark !active_table[1]->bt before free it
 
             // wait for room
             pthread_mutex_lock(&(db->mutex_current));
@@ -1056,7 +1056,7 @@ static struct KeyValue *recursive_lookup(struct Stat *const stat,
     }
     for (int64_t j = vc->cc.count - 1; j >= 0; j--) {
         struct MetaTable *const mt = vc->cc.metatables[j];
-        if (mt == NULL)
+        if (!mt)
             continue;
 
         if ((bitmap & (1u << j)) == 0u) {
@@ -1089,7 +1089,7 @@ struct KeyValue *db_lookup(struct DB *const db, const uint16_t klen,
     // 2nd lookup at active table[1]
     for (uint64_t i = 0; i < 2; i++) {
         struct Table *t = db->active_table[i];
-        if (t == NULL)
+        if (!t)
             continue;
         // immutable item
         struct KeyValue *const kv = table_lookup(t, klen, key, hash);
@@ -1359,7 +1359,7 @@ struct DB *db_touch(const char *const meta_dir, const char *const cm_conf_fn) {
         db = db_load(meta_dir, cm_conf);
     }
     // create anyway
-    if (db == NULL) {
+    if (!db) {
         db = db_create(meta_dir, cm_conf);
     }
     if (db) {
