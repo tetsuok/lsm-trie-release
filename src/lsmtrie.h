@@ -340,7 +340,6 @@ void debug_print_tv_diff(char *tag, const struct timeval t0,
 void debug_trace(void);
 
 // generator.c
-
 uint64_t random_uint64(void);
 struct GenInfo *generator_new_constant(uint64_t constant);
 struct GenInfo *generator_new_counter(uint64_t start);
