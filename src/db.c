@@ -315,32 +315,33 @@ static struct VirtualContainer *vc_pick_full(
 
 static bool recursive_dump(struct VirtualContainer *const vc, FILE *const out) {
     // only the metatable's id is dumpped :)
-    if (vc) {
-        fprintf(out, "[ %" PRIu64 "\n", vc->start_bit);
-        if (vc->cc.bc) {
-            fprintf(out, "<!\n");
-        } else {
-            fprintf(out, "<\n");
-        }
-        // dump at most 8 MetaTable
-        for (uint64_t j = 0; j < vc->cc.count; j++) {
-            if (vc->cc.metatables[j]) {
-                const uint64_t mtid = vc->cc.metatables[j]->mtid;
-                fprintf(out, "%016" PRIx64 "\n", mtid);
-            }
-        }
-        if (vc->cc.bc) {
-            fprintf(out, ">!%016" PRIx64 "\n", vc->cc.bc->mtid);
-        } else {
-            fprintf(out, ">\n");
-        }
-        for (uint64_t j = 0; j < 8; j++) {
-            recursive_dump(vc->sub_vc[j], out);
-        }
-        fprintf(out, "]\n");
-    } else {
+    if (!vc) {
         fprintf(out, "[]\n");
+        return true;
     }
+
+    fprintf(out, "[ %" PRIu64 "\n", vc->start_bit);
+    if (vc->cc.bc) {
+        fprintf(out, "<!\n");
+    } else {
+        fprintf(out, "<\n");
+    }
+    // dump at most 8 MetaTable
+    for (uint64_t j = 0; j < vc->cc.count; j++) {
+        if (vc->cc.metatables[j]) {
+            const uint64_t mtid = vc->cc.metatables[j]->mtid;
+            fprintf(out, "%016" PRIx64 "\n", mtid);
+        }
+    }
+    if (vc->cc.bc) {
+        fprintf(out, ">!%016" PRIx64 "\n", vc->cc.bc->mtid);
+    } else {
+        fprintf(out, ">\n");
+    }
+    for (uint64_t j = 0; j < 8; j++) {
+        recursive_dump(vc->sub_vc[j], out);
+    }
+    fprintf(out, "]\n");
     return true;
 }
 
