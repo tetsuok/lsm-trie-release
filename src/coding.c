@@ -10,9 +10,10 @@
 #include <inttypes.h>
 #include "lsmtrie.h"
 
+static const uint64_t B = 0x80;
+static const uint64_t M = 0x7f;
+
 uint8_t* encode_uint64(uint8_t* dst, uint64_t v) {
-    static const uint64_t B = 0x80;
-    static const uint64_t M = 0x7f;
     uint8_t* ptr = dst;
     uint64_t t = v;
     while (t >= B) {
@@ -27,8 +28,6 @@ uint8_t* encode_uint64(uint8_t* dst, uint64_t v) {
 
 const uint8_t* decode_uint64(const uint8_t* src, uint64_t* value) {
     uint64_t result = 0;
-    static const uint64_t B = 0x80;
-    static const uint64_t M = 0x7f;
     const uint8_t* p = src;
 
     for (uint32_t shift = 0; shift <= 63; shift += 7) {
