@@ -297,11 +297,7 @@ static struct VirtualContainer *vc_pick_compaction(
             max_id = i;
         }
     }
-    if ((max_height > 0) && (max_id < 8)) {
-        return vcs[max_id];
-    } else {
-        return NULL;
-    }
+    return ((max_height > 0) && (max_id < 8)) ? vcs[max_id] : NULL;
 }
 
 // pick one who is full
@@ -1068,9 +1064,8 @@ static struct KeyValue *recursive_lookup(struct Stat *const stat,
     const uint64_t sub_id = compaction_select_table(hash, vc->start_bit + 3);
     if (vc->sub_vc[sub_id]) {
         return recursive_lookup(stat, vc->sub_vc[sub_id], klen, key, hash);
-    } else {
-        return NULL;
     }
+    return NULL;
 }
 
 struct KeyValue *db_lookup(struct DB *const db, uint16_t klen,
