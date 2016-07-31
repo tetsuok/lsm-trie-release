@@ -771,10 +771,11 @@ void table_analysis_verbose(struct Table *const table, FILE *const out) {
         uint16_t volume = 0;
         for (uint64_t hid = 0; hid < BARREL_NR_HT; hid++) {
             for (struct Item* it = barrel->items[hid]; it; it = it->next) {
-                x_moved[it->nr_moved]++;
-                x_moved_all += it->nr_moved;
-                if (it->nr_moved > x_moved_max)
-                    x_moved_max = it->nr_moved;
+                const uint16_t n = it->nr_moved;
+                x_moved[n]++;
+                x_moved_all += n;
+                if (n > x_moved_max)
+                    x_moved_max = n;
                 volume += it->volume;
             }
         }
