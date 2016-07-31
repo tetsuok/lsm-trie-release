@@ -26,12 +26,12 @@
 #define HSHIFT0 ((31))
 #define HSHIFT1 ((64 - HSHIFT0))
 
-static inline uint64_t bloom_bytes_to_bits(const uint32_t len) {
+static inline uint64_t bloom_bytes_to_bits(uint32_t len) {
     // make it odd
     return (len << 3) - 3;
 }
 
-struct BloomFilter *bloom_create(const uint32_t nr_keys,
+struct BloomFilter *bloom_create(uint32_t nr_keys,
                                  struct Mempool *const mempool) {
     const uint32_t bytes0 = (nr_keys * BITS_PER_KEY + 7) >> 3;
     const uint32_t bytes = (bytes0 < 8u) ? 8u : bytes0;  // align
@@ -44,7 +44,7 @@ struct BloomFilter *bloom_create(const uint32_t nr_keys,
     return bf;
 }
 
-void bloom_update(struct BloomFilter *const bf, const uint64_t hv) {
+void bloom_update(struct BloomFilter *const bf, uint64_t hv) {
     uint64_t h = hv;
     const uint64_t delta = (h >> HSHIFT0) | (h << HSHIFT1);
     const uint64_t bits = bloom_bytes_to_bits(bf->bytes);
@@ -57,7 +57,7 @@ void bloom_update(struct BloomFilter *const bf, const uint64_t hv) {
 }
 
 static inline bool bloom_match_raw(const uint8_t *const filter,
-                                   const uint32_t bytes, const uint64_t hv) {
+                                   uint32_t bytes, uint64_t hv) {
     uint64_t h = hv;
     const uint64_t delta = (h >> HSHIFT0) | (h << HSHIFT1);
     const uint64_t bits = bloom_bytes_to_bits(bytes);
@@ -70,14 +70,14 @@ static inline bool bloom_match_raw(const uint8_t *const filter,
     return true;
 }
 
-bool bloom_match(const struct BloomFilter *const bf, const uint64_t hv) {
+bool bloom_match(const struct BloomFilter *const bf, uint64_t hv) {
     return bloom_match_raw(bf->filter, bf->bytes, hv);
 }
 
 // format: <length> <raw_bf> <length> <raw_bf> ...
 // bloomtable is used independently to the table, so don't use mempool
 struct BloomTable *bloomtable_build(struct BloomFilter *const *const bfs,
-                                    const uint64_t nr_bf) {
+                                    uint64_t nr_bf) {
     const uint64_t nr_offsets =
         (nr_bf + BLOOMTABLE_INTERVAL - 1u) / BLOOMTABLE_INTERVAL;
     struct BloomTable *const bt =
@@ -165,8 +165,8 @@ struct BloomTable *bloomtable_load(FILE *const fi) {
     return bt;
 }
 
-bool bloomtable_match(struct BloomTable *const bt, const uint32_t index,
-                      const uint64_t hv) {
+bool bloomtable_match(struct BloomTable *const bt, uint32_t index,
+                      uint64_t hv) {
     // find the raw filter
     assert(index < bt->nr_bf);
     const uint32_t ixix = index / BLOOMTABLE_INTERVAL;
@@ -198,8 +198,8 @@ void bloomtable_free(struct BloomTable *const bt) {
 //         uint16_t uint16_t     encoded
 // format: <box-id> <len-of-box> <len-of-bf> <raw_bf> <len-of-bf> <raw_bf> ...
 struct BloomContainer *bloomcontainer_build(struct BloomTable *const bt,
-                                            const int raw_fd,
-                                            const uint64_t off_raw,
+                                            int raw_fd,
+                                            uint64_t off_raw,
                                             struct Stat *const stat) {
     const uint64_t pages_cap = TABLE_ALIGN;
     uint8_t *const pages = huge_alloc(pages_cap);
@@ -282,8 +282,8 @@ struct BloomContainer *bloomcontainer_build(struct BloomTable *const bt,
 
 struct BloomContainer *bloomcontainer_update(struct BloomContainer *const bc,
                                              struct BloomTable *const bt,
-                                             const int new_raw_fd,
-                                             const uint64_t new_off_raw,
+                                             int new_raw_fd,
+                                             uint64_t new_off_raw,
                                              struct Stat *const stat) {
     assert(bc->nr_barrels == bt->nr_bf);
     const uint64_t pages_cap = TABLE_ALIGN;
@@ -403,7 +403,7 @@ struct BloomContainer *bloomcontainer_update(struct BloomContainer *const bc,
 }
 
 bool bloomcontainer_fetch_raw(struct BloomContainer *const bc,
-                              const uint64_t barrel_id, uint8_t *const buf) {
+                              uint64_t barrel_id, uint8_t *const buf) {
     for (uint64_t i = 0; i < bc->nr_index; i++) {
         if (bc->index_last[i] >= barrel_id) {
             // fetch page at [i]
@@ -436,7 +436,7 @@ bool bloomcontainer_dump_meta(struct BloomContainer *const bc, FILE *const fo) {
 }
 
 struct BloomContainer *bloomcontainer_load_meta(FILE *const fi,
-                                                const int raw_fd) {
+                                                int raw_fd) {
     struct BloomContainer bc0;
     assert(fi);
     const size_t noff = fread(&(bc0.off_raw), sizeof(bc0.off_raw), 1, fi);
@@ -464,7 +464,7 @@ struct BloomContainer *bloomcontainer_load_meta(FILE *const fi,
 
 static uint64_t bloomcontainer_match_nr(struct BloomContainer *const bc,
                                         const uint8_t *const pbox,
-                                        const uint64_t hv) {
+                                        uint64_t hv) {
     const uint8_t *ptr = pbox;
     const uint64_t nr_bf = bc->nr_bf_per_box;
     uint64_t bits = 0;
@@ -485,7 +485,7 @@ static uint64_t bloomcontainer_match_nr(struct BloomContainer *const bc,
 
 // return bitmap. 0: no match
 uint64_t bloomcontainer_match(struct BloomContainer *const bc,
-                              const uint32_t index, const uint64_t hv) {
+                              uint32_t index, uint64_t hv) {
     uint8_t boxpage[BARREL_ALIGN] __attribute__((aligned(4096)));
     const bool rf = bloomcontainer_fetch_raw(bc, (uint64_t)index, boxpage);
     assert(rf);

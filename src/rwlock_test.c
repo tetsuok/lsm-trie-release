@@ -70,8 +70,8 @@ static void *th_writer(void *p) {
     pthread_exit(NULL);
 }
 
-static void run_test(const char *const tag, const uint64_t nr_readers,
-                     const uint64_t nr_writers, void *(*th_r)(void *),
+static void run_test(const char *const tag, uint64_t nr_readers,
+                     uint64_t nr_writers, void *(*th_r)(void *),
                      void *(*th_w)(void *)) {
     struct Magic x;
     rwlock_initial(&(x.rwlock));

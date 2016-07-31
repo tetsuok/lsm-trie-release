@@ -18,7 +18,7 @@ void stat_inc(uint64_t *const p) {
     __sync_fetch_and_add(p, 1);
 }
 
-void stat_inc_n(uint64_t *const p, const uint64_t n) {
+void stat_inc_n(uint64_t *const p, uint64_t n) {
     __sync_fetch_and_add(p, n);
 }
 
@@ -120,7 +120,7 @@ uint32_t *latency_initial(void) {
     return (uint32_t *)m;
 }
 
-void latency_record(const uint64_t usec, uint32_t *const counters) {
+void latency_record(uint64_t usec, uint32_t *const counters) {
     const uint64_t id = usec / STAT_COUNTER_NUSEC;
     if (id < STAT_COUNTER_CAP) {
         __sync_add_and_fetch(&(counters[id]), 1);

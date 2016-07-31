@@ -159,7 +159,7 @@ static void *mixed_thread(void *p) {
 }
 
 static struct GenInfo *gen_initial(const char *const name,
-                                   const uint64_t range) {
+                                   uint64_t range) {
     // static const uint64_t range = UINT64_C(0x20000000000);
     if (!name) {
         return generator_new_uniform(0, range);
@@ -181,7 +181,7 @@ static struct GenInfo *gen_initial(const char *const name,
     }
 }
 
-static uint64_t wait_for_deadline(const uint64_t sec) {
+static uint64_t wait_for_deadline(uint64_t sec) {
     printf("######## Start\n");
     sleep(1);
     const uint64_t dur = sec * 1000000u;
@@ -203,12 +203,12 @@ static uint64_t wait_for_deadline(const uint64_t sec) {
     return finish - start;
 }
 
-static void sig_handler_int(const int sig) {
+static void sig_handler_int(int sig) {
     (void)sig;
     __ts.test_running = false;
 }
 
-static void sig_handler_dump(const int sig) {
+static void sig_handler_dump(int sig) {
     (void)sig;
     db_force_dump_meta(__ts.db);
     debug_trace();

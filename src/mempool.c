@@ -28,7 +28,7 @@ struct Mempool {
 
 static const bool USING_MALLOC = false;
 
-void* huge_alloc(const uint64_t cap) {
+void* huge_alloc(uint64_t cap) {
     const size_t hcap =
         ((cap + MEMPOOL_UNIT - 1) / MEMPOOL_UNIT) * MEMPOOL_UNIT;
     if (hcap != cap)
@@ -46,7 +46,7 @@ void* huge_alloc(const uint64_t cap) {
     return m;
 }
 
-void huge_free(void* const ptr, const uint64_t cap) {
+void huge_free(void* ptr, uint64_t cap) {
     if (USING_MALLOC) {
         free(ptr);
     } else {
@@ -54,7 +54,7 @@ void huge_free(void* const ptr, const uint64_t cap) {
     }
 }
 
-static bool space_alloc_mmap(struct Mempool* const mempool, const size_t cap) {
+static bool space_alloc_mmap(struct Mempool* mempool, size_t cap) {
     const size_t hcap =
         ((cap + MEMPOOL_UNIT - 1) / MEMPOOL_UNIT) * MEMPOOL_UNIT;
     assert(hcap >= cap);
@@ -74,7 +74,7 @@ static bool space_alloc_mmap(struct Mempool* const mempool, const size_t cap) {
     }
 }
 
-struct Mempool* mempool_new(const size_t cap) {
+struct Mempool* mempool_new(size_t cap) {
     struct Mempool* const p = (typeof(p))malloc(sizeof(*p));
     if (!p) {
         return NULL;
@@ -89,7 +89,7 @@ struct Mempool* mempool_new(const size_t cap) {
     return p;
 }
 
-uint8_t* mempool_alloc(struct Mempool* const p, const size_t cap) {
+uint8_t* mempool_alloc(struct Mempool* p, size_t cap) {
     const size_t hcap = ((cap + 8u) & (~7u));
     if ((!p) || ((p->pos + hcap) > p->max)) {
         fprintf(stderr, "mempool_alloc() failed(1): pos: %" PRIu64
@@ -110,7 +110,7 @@ uint8_t* mempool_alloc(struct Mempool* const p, const size_t cap) {
     return r;
 }
 
-void mempool_free(struct Mempool* const p) {
+void mempool_free(struct Mempool* p) {
     if (p->using_mmap) {
         huge_free(p->space, p->max);
     } else {
@@ -119,7 +119,7 @@ void mempool_free(struct Mempool* const p) {
     free(p);
 }
 
-void mempool_show(struct Mempool* const p) {
+void mempool_show(struct Mempool* p) {
     fprintf(stdout, "mempool: pos: %" PRIu64 ", max: %" PRIu64 "\n", p->pos,
             p->max);
 }

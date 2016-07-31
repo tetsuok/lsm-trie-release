@@ -22,8 +22,8 @@
 
 #define CONTAINER_UNIT_SIZE ((TABLE_ALIGN))
 
-static int containermap_open_raw(const char* const raw_fn,
-                                 const off_t cap_hint) {
+static int containermap_open_raw(const char* raw_fn,
+                                 off_t cap_hint) {
     struct stat rawst;
     int raw_fd = -1;
     assert(raw_fn);
@@ -50,8 +50,8 @@ static int containermap_open_raw(const char* const raw_fn,
 }
 
 // nr_units, total_cap, discard
-static bool containermap_probe(struct ContainerMap* const cm,
-                               const int raw_fd) {
+static bool containermap_probe(struct ContainerMap* cm,
+                               int raw_fd) {
     struct stat st;
     assert(raw_fd >= 0);
     const int r = fstat(raw_fd, &st);
@@ -67,8 +67,8 @@ static bool containermap_probe(struct ContainerMap* const cm,
     return (cm->nr_units > 0) && (cm->total_cap > 0);
 }
 
-struct ContainerMap* containermap_create(const char* const raw_fn,
-                                         const uint64_t cap_hint) {
+struct ContainerMap* containermap_create(const char* raw_fn,
+                                         uint64_t cap_hint) {
     struct ContainerMap cm0;
     bzero(&cm0, sizeof(cm0));
     assert(sizeof(off_t) == sizeof(uint64_t));
@@ -91,8 +91,8 @@ struct ContainerMap* containermap_create(const char* const raw_fn,
     return cm;
 }
 
-struct ContainerMap* containermap_load(const char* const meta_fn,
-                                       const char* const raw_fn) {
+struct ContainerMap* containermap_load(const char* meta_fn,
+                                       const char* raw_fn) {
     assert(meta_fn);
     FILE* const cmap_in = fopen(meta_fn, "rb");
     if (!cmap_in)
@@ -134,8 +134,8 @@ struct ContainerMap* containermap_load(const char* const meta_fn,
     return cm;
 }
 
-void containermap_dump(struct ContainerMap* const cm,
-                       const char* const meta_fn) {
+void containermap_dump(struct ContainerMap* cm,
+                       const char* meta_fn) {
     assert(meta_fn);
     FILE* const cmap_out = fopen(meta_fn, "wb");
     assert(cmap_out);
@@ -156,7 +156,7 @@ void containermap_dump(struct ContainerMap* const cm,
     fclose(cmap_out);
 }
 
-void containermap_show(struct ContainerMap* const cm) {
+void containermap_show(struct ContainerMap* cm) {
     pthread_mutex_lock(&(cm->mutex_cm));
     uint64_t ucount = 0;
     // HEADER
@@ -196,7 +196,7 @@ void containermap_show(struct ContainerMap* const cm) {
 }
 
 // return device offset within the reasonable range
-uint64_t containermap_alloc(struct ContainerMap* const cm) {
+uint64_t containermap_alloc(struct ContainerMap* cm) {
     pthread_mutex_lock(&(cm->mutex_cm));
     const uint64_t rid = random_uint64();
 
@@ -218,8 +218,8 @@ uint64_t containermap_alloc(struct ContainerMap* const cm) {
     return (cm->nr_units + 100u) * CONTAINER_UNIT_SIZE;
 }
 
-bool containermap_release(struct ContainerMap* const cm,
-                          const uint64_t offset) {
+bool containermap_release(struct ContainerMap* cm,
+                          uint64_t offset) {
     pthread_mutex_lock(&(cm->mutex_cm));
     assert((offset & (CONTAINER_UNIT_SIZE - 1u)) == 0);
     const uint64_t id = offset / CONTAINER_UNIT_SIZE;
@@ -237,12 +237,12 @@ bool containermap_release(struct ContainerMap* const cm,
     return true;
 }
 
-void containermap_destroy(struct ContainerMap* const cm) {
+void containermap_destroy(struct ContainerMap* cm) {
     assert(cm);
     close(cm->raw_fd);
     free(cm);
 }
 
-uint64_t containermap_unused(const struct ContainerMap* const cm) {
+uint64_t containermap_unused(const struct ContainerMap* cm) {
     return (cm->nr_units - cm->nr_used);
 }

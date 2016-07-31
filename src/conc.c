@@ -10,7 +10,7 @@
 #include <assert.h>
 #include "lsmtrie.h"
 
-void conc_set_affinity_n(const uint64_t cpu) {
+void conc_set_affinity_n(uint64_t cpu) {
     // bind to one cpu
     cpu_set_t cpuset;
     pthread_t thread;
@@ -20,7 +20,7 @@ void conc_set_affinity_n(const uint64_t cpu) {
     pthread_setaffinity_np(thread, sizeof(cpuset), &cpuset);
 }
 
-void conc_fork_reduce(const uint64_t nr, void *(*func)(void *),
+void conc_fork_reduce(uint64_t nr, void *(*func)(void *),
                       void *const arg) {
     assert((nr > UINT64_C(0)) && (nr < UINT64_C(1024)));
     pthread_t ths[nr];

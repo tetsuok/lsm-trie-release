@@ -23,11 +23,11 @@ double debug_time_sec(void) {
     return ((double)usec) / 1000000.0;
 }
 
-uint64_t debug_diff_usec(const uint64_t last) {
+uint64_t debug_diff_usec(uint64_t last) {
     return debug_time_usec() - last;
 }
 
-double debug_diff_sec(const double last) {
+double debug_diff_sec(double last) {
     return debug_time_sec() - last;
 }
 

@@ -140,16 +140,16 @@ struct Compaction {
 #define DB_META_BACKUP_DIR ("META_BACKUP")
 
 // free metafn after use!
-static void db_generate_meta_fn(struct DB *const db, const uint64_t mtid,
+static void db_generate_meta_fn(struct DB *const db, uint64_t mtid,
                                 char *const path) {
     sprintf(path, "%s/%02" PRIx64 "/%016" PRIx64, db->persist_dir, mtid % 256,
             mtid);
 }
 
 static struct MetaTable *db_load_metatable(struct DB *const db,
-                                           const uint64_t mtid,
-                                           const int raw_fd,
-                                           const bool load_bf) {
+                                           uint64_t mtid,
+                                           int raw_fd,
+                                           bool load_bf) {
     char metafn[2048];
     db_generate_meta_fn(db, mtid, metafn);
     struct MetaTable *const mt =
@@ -159,14 +159,14 @@ static struct MetaTable *db_load_metatable(struct DB *const db,
     return mt;
 }
 
-static void db_destory_metatable(struct DB *const db, const uint64_t mtid) {
+static void db_destory_metatable(struct DB *const db, uint64_t mtid) {
     char metafn[2048];
     db_generate_meta_fn(db, mtid, metafn);
     unlink(metafn);
 }
 
 static struct BloomContainer *db_load_bloomcontainer_meta(struct DB *const db,
-                                                          const uint64_t mtid) {
+                                                          uint64_t mtid) {
     char bcmeta_fn[2048];
     db_generate_meta_fn(db, mtid, bcmeta_fn);
     FILE *const fi = fopen(bcmeta_fn, "rb");
@@ -179,7 +179,7 @@ static struct BloomContainer *db_load_bloomcontainer_meta(struct DB *const db,
 }
 
 static bool db_dump_bloomcontainer_meta(struct DB *const db,
-                                        const uint64_t mtid,
+                                        uint64_t mtid,
                                         struct BloomContainer *const bc) {
     char bcmeta_fn[2048];
     db_generate_meta_fn(db, mtid, bcmeta_fn);
@@ -208,7 +208,7 @@ static void db_log(struct DB *const db, const char *const msg, ...) {
     fprintf(db->log, "%s%s\n", head, tail);
 }
 
-static void db_log_diff(struct DB *const db, const double sec0,
+static void db_log_diff(struct DB *const db, double sec0,
                         const char *const msg, ...) {
     if (!db->log)
         return;
@@ -227,7 +227,7 @@ static void db_log_diff(struct DB *const db, const double sec0,
     fprintf(db->log, "%s%s\n", head, tail);
 }
 
-static struct VirtualContainer *vc_create(const uint64_t start_bit) {
+static struct VirtualContainer *vc_create(uint64_t start_bit) {
     struct VirtualContainer *const vc = (typeof(vc))malloc(sizeof(*vc));
     assert(vc);
     bzero(vc, sizeof(*vc));
@@ -288,8 +288,8 @@ static uint64_t vc_count_feed(struct VirtualContainer *const vc) {
 
 // pick from 8 vcs; return NULL for no compaction
 static struct VirtualContainer *vc_pick_compaction(
-    struct VirtualContainer *const *const vcs, const uint64_t start,
-    const uint64_t inc) {
+    struct VirtualContainer *const *const vcs, uint64_t start,
+    uint64_t inc) {
     uint64_t max_id = 8;
     uint64_t max_height = 0;
     for (uint64_t i = start; i < 8; i += inc) {
@@ -310,8 +310,8 @@ static struct VirtualContainer *vc_pick_compaction(
 
 // pick one who is full
 static struct VirtualContainer *vc_pick_full(
-    struct VirtualContainer *const *const vcs, const uint64_t start,
-    const uint64_t inc) {
+    struct VirtualContainer *const *const vcs, uint64_t start,
+    uint64_t inc) {
     for (uint64_t i = start; i < 8; i += inc) {
         if (!vcs[i])
             continue;
@@ -354,7 +354,7 @@ static bool recursive_dump(struct VirtualContainer *const vc, FILE *const out) {
 }
 
 static struct VirtualContainer *recursive_parse(FILE *const in,
-                                                const uint64_t start_bit,
+                                                uint64_t start_bit,
                                                 struct DB *const db) {
     char buf[128];
     fgets(buf, 120, in);
@@ -543,7 +543,7 @@ static uint64_t db_cmap_safe_alloc(struct DB *const db,
 // takes 0.5s on average
 // assume table has been detached from db (like memtable => imm)
 static uint64_t db_table_dump(struct DB *const db, struct Table *const table,
-                              const uint64_t start_bit) {
+                              uint64_t start_bit) {
     const double sec0 = debug_time_sec();
     const uint64_t mtid = db_aquire_mtid(db);
     // post process table
@@ -584,7 +584,7 @@ static uint64_t db_table_dump(struct DB *const db, struct Table *const table,
 }
 
 static uint64_t compaction_select_table(const uint8_t *const hash,
-                                        const uint64_t start_bit) {
+                                        uint64_t start_bit) {
     assert(start_bit >= 3);
     const uint64_t sel_bit = start_bit - 3;
     const uint8_t *start_byte = hash + (sel_bit >> 3);
@@ -597,7 +597,7 @@ static uint64_t compaction_select_table(const uint8_t *const hash,
 static void compaction_initial(struct Compaction *const comp,
                                struct DB *const db,
                                struct VirtualContainer *const vc,
-                               const uint64_t nr_feed) {
+                               uint64_t nr_feed) {
     bzero(comp, sizeof(*comp));
     comp->start_bit = vc->start_bit;
     comp->sub_bit = vc->start_bit + 3;
@@ -860,7 +860,7 @@ static void recursive_compaction(struct DB *const db,
     }
 }
 
-static void db_root_compaction(struct DB *const db, const uint64_t token) {
+static void db_root_compaction(struct DB *const db, uint64_t token) {
     struct VirtualContainer *const vc = db->vcroot;
     const uint64_t nr_input = vc_count_feed(vc);
     if (nr_input == 0) {
@@ -1040,7 +1040,7 @@ static void db_wait_active_table(struct DB *const db) {
 
 static struct KeyValue *recursive_lookup(struct Stat *const stat,
                                          struct VirtualContainer *const vc,
-                                         const uint64_t klen,
+                                         uint64_t klen,
                                          const uint8_t *const key,
                                          const uint8_t *const hash) {
     // lookup in current vc
@@ -1078,7 +1078,7 @@ static struct KeyValue *recursive_lookup(struct Stat *const stat,
     }
 }
 
-struct KeyValue *db_lookup(struct DB *const db, const uint16_t klen,
+struct KeyValue *db_lookup(struct DB *const db, uint16_t klen,
                            const uint8_t *const key) {
     uint8_t hash[HASHBYTES] __attribute__((aligned(8)));
     SHA1(key, klen, hash);
@@ -1127,7 +1127,7 @@ bool db_insert(struct DB *const db, struct KeyValue *const kv) {
     return true;
 }
 
-bool db_multi_insert(struct DB *const db, const uint64_t nr_items,
+bool db_multi_insert(struct DB *const db, uint64_t nr_items,
                      const struct KeyValue *const kvs) {
     uint64_t i = 0;
     while (i < nr_items) {

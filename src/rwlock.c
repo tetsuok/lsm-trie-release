@@ -50,7 +50,7 @@ uint64_t rwlock_reader_lock(struct RWLock *bo) {
     return ticket;
 }
 
-void rwlock_reader_unlock(struct RWLock *bo, const uint64_t ticket) {
+void rwlock_reader_unlock(struct RWLock *bo, uint64_t ticket) {
     pthread_mutex_lock(&(bo->mutex_any));
     struct ReaderLock *const rl = &(bo->rl[ticket & 1]);
     assert(rl->nr_readers);
@@ -89,7 +89,7 @@ uint64_t rwlock_writer_lock(struct RWLock *bo) {
     return ticket;
 }
 
-void rwlock_writer_unlock(struct RWLock *bo, const uint64_t ticket) {
+void rwlock_writer_unlock(struct RWLock *bo, uint64_t ticket) {
     pthread_mutex_lock(&(bo->mutex_any));
     struct ReaderLock *const rl_curr = &(bo->rl[ticket & 1]);
     assert(rl_curr->nr_readers == 0);

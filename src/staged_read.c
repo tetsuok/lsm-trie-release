@@ -83,8 +83,8 @@ static void *read_th(void *const p) {
     pthread_exit(NULL);
 }
 
-static void do_read(const char *const tag, const uint64_t nr_readers,
-                    const uint64_t sec) {
+static void do_read(const char *const tag, uint64_t nr_readers,
+                    uint64_t sec) {
     sleep(2);
     // read
     db_stat_clean(__ts.db);
@@ -147,12 +147,12 @@ static void staged_worker(const struct DBParams *const ps) {
     }
 }
 
-static void sig_handler_int(const int sig) {
+static void sig_handler_int(int sig) {
     (void)sig;
     __ts.test_running = false;
 }
 
-static void sig_handler_dump(const int sig) {
+static void sig_handler_dump(int sig) {
     (void)sig;
     db_force_dump_meta(__ts.db);
     debug_trace();

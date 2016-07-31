@@ -25,7 +25,7 @@ static int uint64_compare(const void *p1, const void *p2) {
 }
 
 static void test_gen(struct GenInfo *gi, char *const tag,
-                     const uint64_t count) {
+                     uint64_t count) {
     printf("#### %s generator test\n", tag);
     const uint64_t t0 = debug_time_usec();
     uint64_t *r = (typeof(r))malloc(sizeof(uint64_t) * count);

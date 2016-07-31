@@ -31,7 +31,7 @@ static uint64_t gen_constant(struct GenInfo *const gi) {
     return gi->gen.constant.constant;
 }
 
-struct GenInfo *generator_new_constant(const uint64_t constant) {
+struct GenInfo *generator_new_constant(uint64_t constant) {
     struct GenInfo *const gi = (typeof(gi))malloc(sizeof(*gi));
     gi->gen.constant.constant = constant;
 
@@ -45,7 +45,7 @@ static uint64_t gen_counter(struct GenInfo *const gi) {
     return v;
 }
 
-struct GenInfo *generator_new_counter(const uint64_t start) {
+struct GenInfo *generator_new_counter(uint64_t start) {
     struct GenInfo *const gi = (typeof(gi))malloc(sizeof(*gi));
     gi->gen.counter.counter = start;
 
@@ -58,8 +58,8 @@ static uint64_t gen_exponential(struct GenInfo *const gi) {
     return (uint64_t)(-log(random_double()) / gi->gen.exponential.gamma);
 }
 
-struct GenInfo *generator_new_exponential(const double percentile,
-                                          const double range) {
+struct GenInfo *generator_new_exponential(double percentile,
+                                          double range) {
     struct GenInfo *const gi = (typeof(gi))malloc(sizeof(*gi));
     gi->gen.exponential.gamma = -log(1.0 - (percentile / 100.0)) / range;
 
@@ -87,7 +87,7 @@ static uint64_t gen_zipfian(struct GenInfo *const gi) {
 #define FNV_OFFSET_BASIS_64 ((UINT64_C(0xCBF29CE484222325)))
 #define FNV_PRIME_64 ((UINT64_C(1099511628211)))
 
-static uint64_t FNV_hash64(const uint64_t value) {
+static uint64_t FNV_hash64(uint64_t value) {
     uint64_t hashval = FNV_OFFSET_BASIS_64;
     uint64_t val = value;
     for (int i = 0; i < 8; i++) {
@@ -99,8 +99,8 @@ static uint64_t FNV_hash64(const uint64_t value) {
     return hashval;
 }
 
-static double zeta_range(const uint64_t start, const uint64_t count,
-                         const double theta) {
+static double zeta_range(uint64_t start, uint64_t count,
+                         double theta) {
     double sum = 0.0;
     if (count > 0x10000000) {
         fprintf(stderr,
@@ -137,7 +137,7 @@ static const uint64_t zetalist_step = UINT64_C(0x10000000000);
 static const uint64_t zetalist_count = 16;
 static const double zetalist_theta = 0.99;
 
-static double zeta(const uint64_t n, const double theta) {
+static double zeta(uint64_t n, double theta) {
     assert(theta == zetalist_theta);
     const uint64_t zlid0 = n / zetalist_step;
     const uint64_t zlid = (zlid0 > zetalist_count) ? zetalist_count : zlid0;
@@ -149,7 +149,7 @@ static double zeta(const uint64_t n, const double theta) {
     return sum0 + sum1;
 }
 
-struct GenInfo *generator_new_zipfian(const uint64_t min, const uint64_t max) {
+struct GenInfo *generator_new_zipfian(uint64_t min, uint64_t max) {
     struct GenInfo *const gi = (typeof(gi))malloc(sizeof(*gi));
     struct GenInfo_Zipfian *const gz = &(gi->gen.zipfian);
 
@@ -178,7 +178,7 @@ static uint64_t gen_xzipfian(struct GenInfo *const gi) {
     return gi->gen.zipfian.min + (FNV_hash64(z) % gi->gen.zipfian.nr_items);
 }
 
-struct GenInfo *generator_new_xzipfian(const uint64_t min, const uint64_t max) {
+struct GenInfo *generator_new_xzipfian(uint64_t min, uint64_t max) {
     struct GenInfo *gi = generator_new_zipfian(min, max);
     gi->type = GEN_XZIPFIAN;
     gi->next = gen_xzipfian;
@@ -189,7 +189,7 @@ static uint64_t gen_uniform(struct GenInfo *const gi) {
     return gi->gen.uniform.min + (uint64_t)(random_double() * gi->gen.uniform.interval);
 }
 
-struct GenInfo *generator_new_uniform(const uint64_t min, const uint64_t max) {
+struct GenInfo *generator_new_uniform(uint64_t min, uint64_t max) {
     struct GenInfo *const gi = (typeof(gi))malloc(sizeof(*gi));
     gi->gen.uniform.min = min;
     gi->gen.uniform.max = max;
