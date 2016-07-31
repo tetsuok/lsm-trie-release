@@ -114,8 +114,7 @@ static inline int item_identical_key(uint16_t klen, const uint8_t *const pk,
 static uint16_t item_erase(struct Item **const items, struct Item *const item) {
     struct Item **iter = items;
     while (*iter) {
-        const bool identical = item_identical(*iter, item);
-        if (identical) {
+        if (item_identical(*iter, item)) {
             // remove
             const uint16_t victim_volume = (*iter)->volume;
             *iter = (*iter)->next;
