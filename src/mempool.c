@@ -70,7 +70,7 @@ static bool space_alloc_mmap(struct Mempool* const mempool, const size_t cap) {
         mempool->using_mmap = false;
         mempool->space = (typeof(mempool->space))malloc(cap);
         mempool->max = (uint64_t)cap;
-        return (mempool->space) ? true : false;
+        return mempool->space;
     }
 }
 

@@ -367,7 +367,7 @@ static struct VirtualContainer *recursive_parse(FILE *const in,
     assert(buf[0] == '<');
     // '<!' : bloomcontainer
     // '<'  : bloomtable
-    const bool load_bf = (buf[1] == '!') ? false : true;
+    const bool load_bf = (buf[1] != '!');
     for (uint64_t j = 0; j < DB_CONTAINER_NR; j++) {
         fgets(buf, 28, in);
         if (buf[0] == '>')
@@ -601,7 +601,7 @@ static void compaction_initial(struct Compaction *const comp,
     bzero(comp, sizeof(*comp));
     comp->start_bit = vc->start_bit;
     comp->sub_bit = vc->start_bit + 3;
-    comp->gen_bc = (comp->sub_bit >= BC_START_BIT) ? true : false;
+    comp->gen_bc = (comp->sub_bit >= BC_START_BIT);
     assert(nr_feed <= vc->cc.count);
     assert(vc->cc.count <= DB_CONTAINER_NR);
     comp->nr_feed = nr_feed;
@@ -1418,5 +1418,5 @@ void db_stat_clean(struct DB *const db) {
 }
 
 bool db_doing_compaction(struct DB *const db) {
-    return db->compaction_running_counter ? true : false;
+    return db->compaction_running_counter;
 }

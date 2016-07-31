@@ -104,7 +104,7 @@ static inline bool item_identical(const struct Item *const a,
         return true;
     if (a->klen != b->klen)
         return false;
-    return (memcmp(a->kv, b->kv, a->klen) == 0) ? true : false;
+    return !memcmp(a->kv, b->kv, a->klen);
 }
 
 static inline int item_identical_key(const uint16_t klen,
@@ -112,7 +112,7 @@ static inline int item_identical_key(const uint16_t klen,
                                      const struct Item *const i) {
     if (klen != i->klen)
         return false;
-    return (memcmp(pk, i->kv, klen) == 0) ? true : false;
+    return !memcmp(pk, i->kv, klen);
 }
 
 static uint16_t item_erase(struct Item **const items, struct Item *const item) {
@@ -502,7 +502,7 @@ void table_free(struct Table *const table) {
 }
 
 bool table_full(const struct Table *const table) {
-    return (table->volume >= table->capacity) ? true : false;
+    return table->volume >= table->capacity;
 }
 
 // insert anyway
@@ -649,10 +649,7 @@ static bool retaining_move_sorted(struct Barrel **const barrels) {
         rid--;
         lid++;
     }
-    if (barrels[rid]->volume > BARREL_CAP)
-        return false;
-    else
-        return true;
+    return barrels[rid]->volume <= BARREL_CAP;
 }
 
 static int __compare_out(const void *const p1, const void *const p2) {
@@ -920,7 +917,7 @@ static bool raw_barrel_fetch(struct MetaTable *const mt,
     if (mt->stat) {
         __sync_add_and_fetch(&(mt->stat->nr_fetch_barrel), 1);
     }
-    return (r == BARREL_ALIGN) ? true : false;
+    return r == BARREL_ALIGN;
 }
 
 static bool raw_barrel_fetch_multiple(struct MetaTable *const mt,
@@ -930,7 +927,7 @@ static bool raw_barrel_fetch_multiple(struct MetaTable *const mt,
     const uint64_t off_barrel = (start_id * BARREL_ALIGN) + mt->mfh.off;
     const size_t bytes = BARREL_ALIGN * nbarrels;
     const ssize_t r = pread(mt->raw_fd, buf, bytes, (off_t)off_barrel);
-    return (r == BARREL_ALIGN) ? true : false;
+    return r == BARREL_ALIGN;
 }
 
 static const struct MetaIndex *raw_barrel_metaindex(const uint8_t *const buf) {

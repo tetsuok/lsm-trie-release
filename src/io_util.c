@@ -138,7 +138,7 @@ void threaded_rw(const int fd, const size_t mask, const int dur, const int nr_r,
         rr[i].duration_sec = dur;
         rr[i].cpu = i % 8;
         rr[i].fd = fd;
-        rr[i].write = (i < nr_w) ? true : false;
+        rr[i].write = (i < nr_w);
         rr[i].nr_io = 0;
         rr[i].perc = perc;
     }
