@@ -46,11 +46,3 @@ const uint8_t* decode_uint64(const uint8_t* const src, uint64_t* const value) {
     *value = 0;
     return src;
 }
-
-uint8_t* encode_uint16(uint8_t* const dst, const uint16_t v);
-
-uint8_t* encode_uint32(uint8_t* const dst, const uint32_t v);
-
-const uint8_t* decode_uint16(const uint8_t* const src, uint16_t* const value);
-
-const uint8_t* decode_uint32(const uint8_t* const src, uint32_t* const value);
