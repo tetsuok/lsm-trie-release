@@ -839,14 +839,14 @@ static void recursive_compaction(struct DB *const db,
 
     // select most significant sub_vc
     struct VirtualContainer *const vc1 = vc_pick_compaction(vc->sub_vc, 0, 1);
-    if (vc1) {
-        recursive_compaction(db, vc1);
-        for (;;) {
-            struct VirtualContainer *const vcf = vc_pick_full(vc->sub_vc, 0, 1);
-            if (!vcf)
-                break;
-            recursive_compaction(db, vcf);
-        }
+    if (!vc1)
+        return;
+    recursive_compaction(db, vc1);
+    for (;;) {
+        struct VirtualContainer *const vcf = vc_pick_full(vc->sub_vc, 0, 1);
+        if (!vcf)
+            break;
+        recursive_compaction(db, vcf);
     }
 }
 
